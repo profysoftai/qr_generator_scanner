@@ -99,7 +99,6 @@ class _ScannerScreenState extends State<ScannerScreen>
     final rawValue = capture.barcodes.firstOrNull?.rawValue;
 
     if (!QrParser.isValid(rawValue)) {
-      // Silently ignore empty/noise frames — only show error for non-null invalid
       if (rawValue != null && rawValue.isNotEmpty && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -131,20 +130,26 @@ class _ScannerScreenState extends State<ScannerScreen>
     );
 
     if (settings.saveScanHistory) {
-      await repo.add(record); // duplicate returns false but we still show result
+      await repo.add(record);
     }
 
     if (!mounted) return;
 
+    // Await the sheet — it completes when dismissed by ANY means:
+    // swipe down, tap outside, or "Scan Again" button.
     await ScanResultSheet.show(
       context,
       record: record,
       onScanAgain: _resumeScan,
     );
+
+    // Always resume after sheet closes, regardless of how it was dismissed.
+    // _resumeScan guards against double-start if button was already tapped.
+    _resumeScan();
   }
 
   void _resumeScan() {
-    if (!mounted) return;
+    if (!mounted || _cameraRunning) return; // already running — skip
     setState(() {
       _processing = false;
       _cameraRunning = true;

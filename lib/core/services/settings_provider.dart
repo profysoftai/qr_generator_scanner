@@ -21,8 +21,8 @@ class SettingsProvider extends ChangeNotifier {
 
   Future<void> setThemeMode(ThemeMode mode) async {
     _themeMode = mode;
-    await _storage.saveThemeMode(_modeToString(mode));
-    notifyListeners();
+    notifyListeners(); // notify immediately — paint first, persist after
+    _storage.saveThemeMode(_modeToString(mode)); // fire-and-forget
   }
 
   Future<void> setSaveScanHistory(bool value) async {

@@ -24,6 +24,7 @@ class _GeneratorScreenState extends State<GeneratorScreen>
   final _repaintKey = GlobalKey();
   String _qrData = '';
   bool _saved = false;
+  bool _isSaving = false;
   String? _inputError;
 
   @override
@@ -98,7 +99,10 @@ class _GeneratorScreenState extends State<GeneratorScreen>
   }
 
   Future<void> _saveToGallery() async {
+    if (_isSaving) return;
+    setState(() => _isSaving = true);
     await saveToGalleryWithPermission(_repaintKey);
+    if (mounted) setState(() => _isSaving = false);
   }
 
   @override
@@ -222,8 +226,16 @@ class _GeneratorScreenState extends State<GeneratorScreen>
                         const SizedBox(width: 8),
                         Expanded(
                           child: OutlinedButton.icon(
-                            onPressed: _saveToGallery,
-                            icon: const Icon(Icons.download_outlined, size: 18),
+                            onPressed: _isSaving ? null : _saveToGallery,
+                            icon: _isSaving
+                                ? const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2),
+                                  )
+                                : const Icon(Icons.download_outlined,
+                                    size: 18),
                             label: const Text(AppStrings.saveToGallery),
                           ),
                         ),

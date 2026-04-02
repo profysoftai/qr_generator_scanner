@@ -6,65 +6,78 @@ import 'package:qr_generator_scanner/core/services/storage_permission_service.da
 
 /// Mix this into any [State] that has a [GlobalKey] for a [RepaintBoundary].
 /// Call [saveToGalleryWithPermission] with the repaint key.
+///
+/// Pass [messengerKey] when calling from a bottom sheet so the snackbar
+/// appears on the parent Scaffold, not the sheet's own context.
 mixin GallerySaveMixin<T extends StatefulWidget> on State<T> {
   final _storagePermService = StoragePermissionService();
 
-  Future<void> saveToGalleryWithPermission(GlobalKey repaintKey) async {
-    // 1. Check current state
-    var state = await _storagePermService.check();
+  Future<void> saveToGalleryWithPermission(
+    GlobalKey repaintKey, {
+    ScaffoldMessengerState? messenger,
+  }) async {
+    // Capture messenger synchronously before any await.
+    // Falls back to the widget's own context if none provided.
+    final msg = messenger ?? ScaffoldMessenger.of(context);
 
-    // 2. Not required (Android 10–12) — go straight to save
-    if (state == StoragePermissionState.notRequired) {
-      await _doSave(repaintKey);
+    // 1. Check current permission state
+    var permState = await _storagePermService.check();
+
+    // 2. No permission needed (Android 10–12) — save immediately
+    if (permState == StoragePermissionState.notRequired) {
+      await _doSave(repaintKey, msg);
       return;
     }
 
     // 3. Already granted — save immediately
-    if (state == StoragePermissionState.granted) {
-      await _doSave(repaintKey);
+    if (permState == StoragePermissionState.granted) {
+      await _doSave(repaintKey, msg);
       return;
     }
 
-    // 4. Permanently denied — explain and route to Settings
-    if (state == StoragePermissionState.permanentlyDenied) {
+    // 4. Permanently denied — open Settings dialog
+    if (permState == StoragePermissionState.permanentlyDenied) {
+      if (!mounted) return;
       await _showPermanentDenialDialog();
       return;
     }
 
-    // 5. Denied (first time or previously denied) — show rationale then request
+    // 5. Denied — show rationale then request
+    if (!mounted) return;
     final shouldRequest = await _showRationaleDialog();
     if (!shouldRequest || !mounted) return;
 
-    state = await _storagePermService.request();
+    permState = await _storagePermService.request();
 
     if (!mounted) return;
 
-    if (state == StoragePermissionState.granted ||
-        state == StoragePermissionState.notRequired) {
-      await _doSave(repaintKey);
-    } else if (state == StoragePermissionState.permanentlyDenied) {
+    if (permState == StoragePermissionState.granted ||
+        permState == StoragePermissionState.notRequired) {
+      // Permission just granted — continue to save
+      await _doSave(repaintKey, msg);
+    } else if (permState == StoragePermissionState.permanentlyDenied) {
       await _showPermanentDenialDialog();
     } else {
       // Still denied after request
-      ScaffoldMessenger.of(context).showSnackBar(
+      msg.showSnackBar(
         const SnackBar(content: Text(AppStrings.storagePermissionMsg)),
       );
     }
   }
 
-  Future<void> _doSave(GlobalKey repaintKey) async {
+  Future<void> _doSave(GlobalKey repaintKey, ScaffoldMessengerState msg) async {
     final ok = await QrShareService.saveToGallery(repaintKey);
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
+    // Use the pre-captured messenger — safe even if widget is unmounted
+    msg.showSnackBar(
       SnackBar(
         content: Text(
-            ok ? AppStrings.savedToGallery : AppStrings.errorSaveGallery),
+          ok ? AppStrings.savedToGallery : AppStrings.errorSaveGallery,
+        ),
+        duration: const Duration(seconds: 3),
       ),
     );
   }
 
-  /// Shows a rationale dialog explaining why storage is needed.
-  /// Returns true if the user taps "Grant Access".
   Future<bool> _showRationaleDialog() async {
     final result = await showDialog<bool>(
       context: context,
@@ -86,7 +99,6 @@ mixin GallerySaveMixin<T extends StatefulWidget> on State<T> {
     return result ?? false;
   }
 
-  /// Shows a dialog explaining permanent denial and offers to open Settings.
   Future<void> _showPermanentDenialDialog() async {
     if (!mounted) return;
     await showDialog<void>(

@@ -12,6 +12,7 @@ import 'package:qr_generator_scanner/features/home/home_screen.dart';
 import 'package:qr_generator_scanner/features/my_qr/my_qr_screen.dart';
 import 'package:qr_generator_scanner/features/scanner/scanner_screen.dart';
 import 'package:qr_generator_scanner/features/settings/settings_screen.dart';
+import 'package:qr_generator_scanner/features/splash/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,7 +55,7 @@ class QrApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const MainShell(),
+      home: const SplashScreen(),
     );
   }
 }

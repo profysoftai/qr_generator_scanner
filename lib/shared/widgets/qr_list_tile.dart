@@ -94,6 +94,7 @@ class _QrDetailSheet extends StatefulWidget {
 
 class _QrDetailSheetState extends State<_QrDetailSheet> with GallerySaveMixin {
   final _repaintKey = GlobalKey();
+  bool _isSaving = false;
 
   Future<void> _share() async {
     final ok = await QrShareService.share(
@@ -109,7 +110,13 @@ class _QrDetailSheetState extends State<_QrDetailSheet> with GallerySaveMixin {
   }
 
   Future<void> _saveToGallery() async {
-    await saveToGalleryWithPermission(_repaintKey);
+    if (_isSaving) return;
+    setState(() => _isSaving = true);
+    // Capture the root ScaffoldMessenger before any await so the snackbar
+    // shows on the main Scaffold even after the bottom sheet is dismissed.
+    final messenger = ScaffoldMessenger.of(context);
+    await saveToGalleryWithPermission(_repaintKey, messenger: messenger);
+    if (mounted) setState(() => _isSaving = false);
   }
 
   @override
@@ -221,8 +228,14 @@ class _QrDetailSheetState extends State<_QrDetailSheet> with GallerySaveMixin {
               const SizedBox(width: 8),
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: _saveToGallery,
-                  icon: const Icon(Icons.download_outlined, size: 18),
+                  onPressed: _isSaving ? null : _saveToGallery,
+                  icon: _isSaving
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.download_outlined, size: 18),
                   label: const Text(AppStrings.saveToGallery),
                 ),
               ),

@@ -2,171 +2,210 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_generator_scanner/core/services/settings_provider.dart';
 
-/// A pill-shaped three-mode theme toggle.
-/// Cycles: Light → Dark → System on each tap.
-/// - Light: white pill, sun icon on left, thumb on right
-/// - Dark:  dark pill, moon icon on right, thumb on left
-/// - System: dark pill, auto icon centred, thumb centred
 class ThemeToggle extends StatelessWidget {
   const ThemeToggle({super.key});
 
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsProvider>();
-    final mode = settings.themeMode;
 
-    return _ThemeToggleInner(
-      mode: mode,
-      onTap: () {
-        final next = mode == ThemeMode.light
+    final effectiveMode = settings.themeMode == ThemeMode.system
+        ? (MediaQuery.platformBrightnessOf(context) == Brightness.dark
             ? ThemeMode.dark
-            : mode == ThemeMode.dark
-                ? ThemeMode.system
-                : ThemeMode.light;
-        context.read<SettingsProvider>().setThemeMode(next);
-      },
+            : ThemeMode.light)
+        : settings.themeMode;
+
+    final isDark = effectiveMode == ThemeMode.dark;
+
+    return Semantics(
+      label: isDark
+          ? 'Dark mode active. Tap to switch to Light.'
+          : 'Light mode active. Tap to switch to Dark.',
+      button: true,
+      child: _ThemeToggleAnimated(
+        isDark: isDark,
+        onTap: () => context.read<SettingsProvider>().setThemeMode(
+              isDark ? ThemeMode.light : ThemeMode.dark,
+            ),
+      ),
     );
   }
 }
 
-class _ThemeToggleInner extends StatelessWidget {
-  final ThemeMode mode;
+class _ThemeToggleAnimated extends StatefulWidget {
+  final bool isDark;
   final VoidCallback onTap;
 
-  const _ThemeToggleInner({required this.mode, required this.onTap});
+  const _ThemeToggleAnimated({
+    required this.isDark,
+    required this.onTap,
+  });
 
   @override
-  Widget build(BuildContext context) {
-    // Dimensions
-    const double width = 64;
-    const double height = 32;
-    const double thumbSize = 24;
-    const double padding = 4;
+  State<_ThemeToggleAnimated> createState() => _ThemeToggleAnimatedState();
+}
 
-    // Thumb position: left=light, right=dark, centre=system
-    final double thumbLeft = mode == ThemeMode.light
-        ? padding
-        : mode == ThemeMode.dark
-            ? width - thumbSize - padding
-            : (width - thumbSize) / 2;
+class _ThemeToggleAnimatedState extends State<_ThemeToggleAnimated>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
 
-    // Track colour
-    final bool isDark = mode == ThemeMode.dark ||
-        (mode == ThemeMode.system &&
-            MediaQuery.platformBrightnessOf(context) == Brightness.dark);
-    final Color trackColor = isDark
-        ? const Color(0xFF2E2E2E)
-        : const Color(0xFFF0F0F0);
-    final Color thumbColor = isDark
-        ? const Color(0xFF1A1A1A)
-        : Colors.white;
-    final Color iconColor = isDark ? Colors.white : const Color(0xFF2E2E2E);
+  // All values driven by the single controller
+  late final Animation<double> _thumbSlide;
+  late final Animation<Color?> _trackColor;
+  late final Animation<Color?> _thumbColor;
+  late final Animation<double> _sunOpacity;
+  late final Animation<double> _moonOpacity;
+  late final Animation<Color?> _thumbIconColor;
 
-    // Icon shown inside the track (opposite side from thumb)
-    final Widget trackIcon = _trackIcon(mode, iconColor);
+  static const _trackDark = Color(0xFF2E2E2E);
+  static const _trackLight = Color(0xFFF0F0F0);
+  static const _thumbDark = Color(0xFF1A1A1A);
+  static const _thumbLight = Colors.white;
+  static const _iconDark = Colors.white;
+  static const _iconLight = Color(0xFF1A1A1A);
 
-    return Semantics(
-      label: _semanticsLabel(mode),
-      button: true,
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 280),
-          curve: Curves.easeInOut,
-          width: width,
-          height: height,
-          decoration: BoxDecoration(
-            color: trackColor,
-            borderRadius: BorderRadius.circular(height / 2),
-          ),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              // Track icon (sun / moon / auto)
-              trackIcon,
-              // Animated thumb
-              AnimatedPositioned(
-                duration: const Duration(milliseconds: 280),
-                curve: Curves.easeInOut,
-                left: thumbLeft,
-                top: padding,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 280),
-                  width: thumbSize,
-                  height: thumbSize,
-                  decoration: BoxDecoration(
-                    color: thumbColor,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.18),
-                        blurRadius: 4,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  // Thumb icon (opposite of track icon)
-                  child: Center(
-                    child: _thumbIcon(mode, iconColor),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 240),
+      value: widget.isDark ? 1.0 : 0.0, // 0 = light, 1 = dark
+    );
+    _buildAnimations();
+  }
+
+  void _buildAnimations() {
+    // Thumb slides from left (0) to right (1)
+    _thumbSlide = _ctrl.drive(CurveTween(curve: Curves.easeInOutCubic));
+
+    _trackColor = ColorTween(begin: _trackLight, end: _trackDark)
+        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
+
+    _thumbColor = ColorTween(begin: _thumbLight, end: _thumbDark)
+        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
+
+    _thumbIconColor = ColorTween(begin: _iconLight, end: _iconDark)
+        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
+
+    // Sun fades in as we go dark (visible on left when dark)
+    _sunOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _ctrl, curve: const Interval(0.3, 1.0)),
+    );
+
+    // Moon fades in as we go light (visible on right when light)
+    _moonOpacity = Tween<double>(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(parent: _ctrl, curve: const Interval(0.0, 0.7)),
     );
   }
 
-  /// Icon drawn inside the track background (visible when thumb is away)
-  Widget _trackIcon(ThemeMode mode, Color color) {
-    switch (mode) {
-      case ThemeMode.light:
-        // Light mode: moon on the right side of track
-        return Align(
-          alignment: Alignment.centerRight,
-          child: Padding(
-            padding: const EdgeInsets.only(right: 6),
-            child: Icon(Icons.dark_mode_outlined, size: 14, color: color),
-          ),
-        );
-      case ThemeMode.dark:
-        // Dark mode: sun on the left side of track
-        return Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 6),
-            child: Icon(Icons.light_mode_outlined, size: 14, color: color),
-          ),
-        );
-      default:
-        // System: auto icon centred
-        return Center(
-          child: Icon(Icons.brightness_auto_outlined, size: 14, color: color),
-        );
+  @override
+  void didUpdateWidget(_ThemeToggleAnimated old) {
+    super.didUpdateWidget(old);
+    if (old.isDark != widget.isDark) {
+      if (widget.isDark) {
+        _ctrl.forward();
+      } else {
+        _ctrl.reverse();
+      }
     }
   }
 
-  /// Icon drawn inside the thumb circle
-  Widget _thumbIcon(ThemeMode mode, Color color) {
-    switch (mode) {
-      case ThemeMode.light:
-        return Icon(Icons.light_mode, size: 14, color: color);
-      case ThemeMode.dark:
-        return Icon(Icons.dark_mode, size: 14, color: color);
-      default:
-        return Icon(Icons.brightness_auto, size: 14, color: color);
-    }
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
   }
 
-  String _semanticsLabel(ThemeMode mode) {
-    switch (mode) {
-      case ThemeMode.light:
-        return 'Light theme active. Tap to switch to Dark.';
-      case ThemeMode.dark:
-        return 'Dark theme active. Tap to switch to System.';
-      default:
-        return 'System theme active. Tap to switch to Light.';
-    }
+  @override
+  Widget build(BuildContext context) {
+    const double width = 80;
+    const double height = 40;
+    const double thumbSize = 32;
+    const double padding = 4;
+    const double travelDistance = width - thumbSize - padding * 2;
+
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: AnimatedBuilder(
+        animation: _ctrl,
+        builder: (context, _) {
+          final thumbLeft = padding + _thumbSlide.value * travelDistance;
+          final borderColor = Color.lerp(
+            const Color(0xFFDDDDDD),
+            const Color(0xFF444444),
+            _ctrl.value,
+          )!;
+
+          return Container(
+            width: width,
+            height: height,
+            decoration: BoxDecoration(
+              color: _trackColor.value,
+              borderRadius: BorderRadius.circular(height / 2),
+              border: Border.all(color: borderColor, width: 1),
+            ),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                // Sun icon — left side, visible when dark
+                Positioned(
+                  left: padding + (thumbSize - 18) / 2,
+                  top: (height - 18) / 2,
+                  child: Opacity(
+                    opacity: _sunOpacity.value,
+                    child: const Icon(
+                      Icons.light_mode_outlined,
+                      size: 18,
+                      color: Color(0xFF888888),
+                    ),
+                  ),
+                ),
+                // Moon icon — right side, visible when light
+                Positioned(
+                  right: padding + (thumbSize - 18) / 2,
+                  top: (height - 18) / 2,
+                  child: Opacity(
+                    opacity: _moonOpacity.value,
+                    child: const Icon(
+                      Icons.dark_mode_outlined,
+                      size: 18,
+                      color: Color(0xFFAAAAAA),
+                    ),
+                  ),
+                ),
+                // Thumb
+                Positioned(
+                  left: thumbLeft,
+                  top: padding,
+                  child: Container(
+                    width: thumbSize,
+                    height: thumbSize,
+                    decoration: BoxDecoration(
+                      color: _thumbColor.value,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.22),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Icon(
+                        widget.isDark ? Icons.dark_mode : Icons.light_mode,
+                        size: 18,
+                        color: _thumbIconColor.value,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
   }
 }
