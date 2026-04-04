@@ -214,6 +214,7 @@ class _QuickActionTile extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
           ],
         ),
       ),
