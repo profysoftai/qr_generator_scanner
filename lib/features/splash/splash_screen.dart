@@ -179,10 +179,10 @@ class _MainContent extends StatelessWidget {
         
         // Developer tag
         Text(
-          'Developed by THE GREAT',
+          'Developed by GAMENCY TECH',
           style: TextStyle(
             fontSize: 13,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.bold,
             color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.55),
           ),
         ),
