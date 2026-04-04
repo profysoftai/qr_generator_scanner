@@ -6,25 +6,22 @@ class FaqHelpScreen extends StatelessWidget {
   const FaqHelpScreen({super.key});
 
   static const _faqs = [
+    // ── Scanning ──────────────────────────────────────────────
     (
       'How do I scan a QR code?',
       'Go to the Scan tab, point your camera at a QR code, and the app will automatically detect and read it.',
       Icons.qr_code_scanner,
     ),
     (
+      'What types of QR codes can I scan?',
+      'The app can scan URLs, emails, phone numbers, Wi-Fi credentials, and plain text encoded in QR format.',
+      Icons.category_outlined,
+    ),
+    // ── Generating ──────────────────────────────────────────────
+    (
       'How do I create a QR code?',
       'Navigate to the Generate tab, type any text or URL, and tap "Generate QR Code". You can then share or save it.',
       Icons.qr_code_rounded,
-    ),
-    (
-      'Where are my scanned codes saved?',
-      'All scanned codes are saved in the History tab, provided the "Save Scan History" toggle is enabled in Settings.',
-      Icons.history_rounded,
-    ),
-    (
-      'Can I use the app offline?',
-      'Yes! QR code generation and scanning work completely offline. An internet connection is only needed to open scanned URLs.',
-      Icons.wifi_off_rounded,
     ),
     (
       'How do I save a QR code to my gallery?',
@@ -32,19 +29,51 @@ class FaqHelpScreen extends StatelessWidget {
       Icons.save_alt_rounded,
     ),
     (
-      'How do I change the app theme?',
-      'Go to Settings → Appearance → Theme and choose between System, Light, or Dark mode.',
-      Icons.palette_outlined,
-    ),
-    (
       'How do I share a QR code?',
       'After generating a QR code, tap the "Share" button to send it via any app on your device.',
       Icons.share_outlined,
     ),
+    // ── Managing (History & My QRs) ──────────────────────────────
     (
-      'What types of QR codes can I scan?',
-      'The app can scan URLs, emails, phone numbers, Wi-Fi credentials, and plain text encoded in QR format.',
-      Icons.category_outlined,
+      'What is the difference between History and My QRs?',
+      'The "History" tab automatically logs the QR codes you scan. The "My QRs" tab saves all the custom QR codes you generate.',
+      Icons.compare_arrows_rounded,
+    ),
+    (
+      'Where are my scanned codes saved?',
+      'All scanned codes are saved in the History tab, provided the "Save Scan History" toggle is enabled in Settings.',
+      Icons.history_rounded,
+    ),
+    (
+      'How do I clear my scan history?',
+      'Navigate to the History tab and tap the trash icon in the top right corner to permanently clear all your scanned codes.',
+      Icons.delete_sweep_outlined,
+    ),
+    (
+      'How do I mark a QR code as a favorite?',
+      'In either the History or My QRs tab, tap the star icon next to any QR code. You can filter the lists to only show favorites.',
+      Icons.star_border_rounded,
+    ),
+    (
+      'How do I search for a past scan?',
+      'Go to the History tab and use the search bar at the top to quickly find specific codes by their content.',
+      Icons.search_rounded,
+    ),
+    // ── General ────────────────────────────────────────────────
+    (
+      'Can I use the app offline?',
+      'Yes! QR code generation and scanning work completely offline. An internet connection is only needed to open scanned URLs.',
+      Icons.wifi_off_rounded,
+    ),
+    (
+      'Why does the app need Camera and Storage permissions?',
+      'Camera access is strictly required for scanning codes in real time. Storage access is only needed if you choose to save an image to your gallery.',
+      Icons.admin_panel_settings_outlined,
+    ),
+    (
+      'How do I change the app theme?',
+      'Go to Settings → Appearance → Theme and choose between System, Light, or Dark mode.',
+      Icons.palette_outlined,
     ),
   ];
 
