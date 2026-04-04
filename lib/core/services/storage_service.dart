@@ -5,6 +5,7 @@ class StorageService {
   static const _recordsKey = 'qr_records';
   static const _saveScanHistoryKey = 'save_scan_history';
   static const _themeKey = 'theme_mode';
+  static const _hasSelectedThemeKey = 'has_selected_theme';
 
   Future<void> saveRecords(List<Map<String, dynamic>> records) async {
     try {
@@ -58,6 +59,22 @@ class StorageService {
       return prefs.getString(_themeKey) ?? 'system';
     } catch (_) {
       return 'system';
+    }
+  }
+
+  Future<void> saveHasSelectedTheme(bool value) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_hasSelectedThemeKey, value);
+    } catch (_) {}
+  }
+
+  Future<bool> loadHasSelectedTheme() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getBool(_hasSelectedThemeKey) ?? false;
+    } catch (_) {
+      return false;
     }
   }
 }

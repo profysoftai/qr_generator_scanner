@@ -6,23 +6,28 @@ class SettingsProvider extends ChangeNotifier {
 
   ThemeMode _themeMode = ThemeMode.system;
   bool _saveScanHistory = true;
+  bool _hasSelectedTheme = false;
 
   SettingsProvider(this._storage);
 
   ThemeMode get themeMode => _themeMode;
   bool get saveScanHistory => _saveScanHistory;
+  bool get hasSelectedTheme => _hasSelectedTheme;
 
   Future<void> load() async {
     final mode = await _storage.loadThemeMode();
     _themeMode = _modeFromString(mode);
     _saveScanHistory = await _storage.loadSaveScanHistory();
+    _hasSelectedTheme = await _storage.loadHasSelectedTheme();
     notifyListeners();
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
     _themeMode = mode;
+    _hasSelectedTheme = true;
     notifyListeners(); // notify immediately — paint first, persist after
     _storage.saveThemeMode(_modeToString(mode)); // fire-and-forget
+    _storage.saveHasSelectedTheme(true);
   }
 
   Future<void> setSaveScanHistory(bool value) async {

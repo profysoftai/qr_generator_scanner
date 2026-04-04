@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:qr_generator_scanner/main.dart';
 
-/// Lightweight splash screen — single AnimationController, minimal rebuilds.
-/// To remove: delete this file and change main.dart home: to MainShell().
+const kSaffron = Color(0xFFFF9933);
+const kGreen = Color(0xFF138808);
+const kBgLight = Color(0xFFF2F2F7);
+const kBgDark = Color(0xFF000000);
+const kLabelLight = Color(0xFF000000);
+const kLabelDark = Color(0xFFFFFFFF);
+const kSecondLight = Color(0xFF8E8E93);
+const kSecondDark = Color(0xFF8E8E93);
+const kSepLight = Color(0xFFC6C6C8);
+const kSepDark = Color(0xFF38383A);
+
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -14,6 +23,7 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl;
   late final Animation<double> _fade;
+  late final Animation<double> _progress;
 
   @override
   void initState() {
@@ -21,13 +31,16 @@ class _SplashScreenState extends State<SplashScreen>
 
     _ctrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 4000),
+      duration: const Duration(milliseconds: 2800),
     );
 
-    // Fade completes in first 400ms of the 4000ms timeline (400/4000 = 0.10)
     _fade = CurvedAnimation(
       parent: _ctrl,
       curve: const Interval(0.0, 0.10, curve: Curves.easeOut),
+    );
+
+    _progress = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut),
     );
 
     _ctrl.forward();
@@ -41,11 +54,9 @@ class _SplashScreenState extends State<SplashScreen>
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            const MainShell(),
-        transitionsBuilder:
-            (context, animation, secondaryAnimation, child) =>
-                FadeTransition(opacity: animation, child: child),
+        pageBuilder: (context, animation, secondaryAnimation) => MainShell(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
         transitionDuration: const Duration(milliseconds: 350),
       ),
     );
@@ -59,139 +70,216 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFFF9933),
-      body: DecoratedBox(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFFF9933), // saffron
-              Color(0xFFFFFFFF), // white
-              Color(0xFF138808), // green
+      backgroundColor: isDark ? kBgDark : kBgLight,
+      body: SafeArea(
+        child: FadeTransition(
+          opacity: _fade,
+          child: Column(
+            children: [
+              _TricolorTopBar(isDark: isDark),
+              Expanded(
+                child: _MainContent(isDark: isDark, progress: _progress),
+              ),
+              _Footer(isDark: isDark),
             ],
-            stops: [0.0, 0.5, 1.0],
           ),
         ),
-        child: SafeArea(
-          child: FadeTransition(
-            opacity: _fade,
-            child: Column(
-              children: [
-                // ── Centre: logo placeholder + text ─────────────────
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Logo Coming Soon placeholder
-                      Container(
-                        width: 130,
-                        height: 130,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(
-                            color: const Color(0xFFFF9933),
-                            width: 2.5,
-                          ),
-                        ),
-                        child: const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.image_outlined,
-                              size: 44,
-                              color: Color(0xFFAAAAAA),
-                            ),
-                            SizedBox(height: 6),
-                            Text(
-                              'Logo\nComing Soon',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Color(0xFF888888),
-                                fontWeight: FontWeight.w500,
-                                height: 1.4,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 28),
+      ),
+    );
+  }
+}
 
-                      // App name — dark for contrast on white centre
-                      const Text(
-                        'QR_SCANNER_PRO_MAX',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          color: Color(0xFF1A1A1A),
-                          letterSpacing: 1.8,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
+class _TricolorTopBar extends StatelessWidget {
+  final bool isDark;
+  const _TricolorTopBar({required this.isDark});
 
-                      // Developer — solid dark, always readable
-                      const Text(
-                        'Developed by: THE GREAT',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF1A1A1A),
-                          letterSpacing: 0.6,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // ── Progress bar — only this subtree rebuilds ────────
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(32, 0, 32, 10),
-                  child: AnimatedBuilder(
-                    animation: _ctrl,
-                    builder: (context, child) => Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          '${(_ctrl.value * 100).toInt()}%',
-                          style: const TextStyle(
-                            fontSize: 10,
-                            color: Color(0x99000000),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        LinearProgressIndicator(
-                          value: _ctrl.value,
-                          minHeight: 2,
-                          backgroundColor: const Color(0x33000000),
-                          valueColor: const AlwaysStoppedAnimation<Color>(
-                            Color(0xFF138808),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // ── Footer — outside Expanded, always visible ────────
-                const Padding(
-                  padding: EdgeInsets.only(bottom: 24),
-                  child: Text(
-                    'Made with ❤️ in India',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xFF1A1A1A),
-                      letterSpacing: 0.4,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: isDark ? 0.3 : 1.0,
+      child: Container(
+        height: 3,
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [kSaffron, Colors.white, kGreen],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MainContent extends StatelessWidget {
+  final bool isDark;
+  final Animation<double> progress;
+
+  const _MainContent({
+    required this.isDark,
+    required this.progress,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Spacer(),
+        
+        // LOGO BOX
+        Container(
+          width: 100,
+          height: 100,
+          decoration: BoxDecoration(
+            color: const Color(0xFF007AFF),
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF007AFF).withValues(alpha: 0.3),
+                blurRadius: 24,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.qr_code_2,
+            size: 52,
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(height: 28),
+        
+        // Title
+        Text(
+          'QR Generator & Scanner',
+          style: TextStyle(
+            fontSize: 26,
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.5,
+            color: isDark ? kLabelDark : kLabelLight,
+          ),
+        ),
+        const SizedBox(height: 6),
+        
+        // Tagline
+        Text(
+          'Scan. Generate. Share.',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+            color: isDark ? kSecondDark : kSecondLight,
+          ),
+        ),
+        const SizedBox(height: 14),
+        
+        // Developer tag
+        Text(
+          'Developed by THE GREAT',
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.55),
+          ),
+        ),
+        
+        const Spacer(),
+        
+        // Progress Section
+        _ProgressSection(isDark: isDark, progress: progress),
+        const SizedBox(height: 40),
+      ],
+    );
+  }
+}
+
+class _ProgressSection extends StatelessWidget {
+  final bool isDark;
+  final Animation<double> progress;
+
+  const _ProgressSection({
+    required this.isDark,
+    required this.progress,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: progress,
+      builder: (context, child) {
+        final val = progress.value;
+        final pct = (val * 100).toInt();
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 44),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Loading...',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: isDark ? kSecondDark : kSecondLight,
+                    ),
+                  ),
+                  Text(
+                    '$pct%',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: isDark ? kSecondDark : kSecondLight,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Container(
+                height: 4,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: isDark ? kSepDark : const Color(0xFFE5E5EA),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: FractionallySizedBox(
+                      widthFactor: val,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [kSaffron, Color(0xFF007AFF), kGreen],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _Footer extends StatelessWidget {
+  final bool isDark;
+  const _Footer({required this.isDark});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24),
+      child: Text(
+        'Made with ❤️ in India',
+        style: TextStyle(
+          fontSize: 13,
+          color: isDark ? kSecondDark : kSecondLight,
         ),
       ),
     );

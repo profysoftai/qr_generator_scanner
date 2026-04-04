@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:qr_generator_scanner/core/constants/app_colors.dart';
 import 'package:qr_generator_scanner/core/constants/app_strings.dart';
 import 'package:qr_generator_scanner/core/services/qr_share_service.dart';
 import 'package:qr_generator_scanner/core/utils/app_utils.dart';
@@ -13,7 +14,7 @@ class QrListTile extends StatelessWidget {
   final VoidCallback onDelete;
   final VoidCallback onFavoriteToggle;
 
-  const QrListTile({
+  QrListTile({
     super.key,
     required this.record,
     required this.onDelete,
@@ -21,10 +22,12 @@ class QrListTile extends StatelessWidget {
   });
 
   void _showDetail(BuildContext context) {
+    HapticFeedback.lightImpact();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
+      backgroundColor: context.colors.iosGroupedBg,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) => _QrDetailSheet(
@@ -43,18 +46,34 @@ class QrListTile extends StatelessWidget {
     final type = QrParser.detect(record.data);
     return ListTile(
       onTap: () => _showDetail(context),
-      leading: CircleAvatar(
-        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-        child: Text(QrParser.icon(type),
-            style: const TextStyle(fontSize: 16)),
+      leading: Container(
+        width: 32,
+        height: 32,
+        decoration: BoxDecoration(
+          color: context.colors.iosBlue.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Center(
+          child: Text(
+            QrParser.icon(type),
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
       ),
       title: Text(
         AppUtils.truncate(record.data),
-        style: const TextStyle(fontWeight: FontWeight.w500),
+        style: TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w500,
+          color: context.colors.iosLabel,
+        ),
       ),
       subtitle: Text(
-        '${record.label} · ${AppUtils.timeAgo(record.createdAt)}',
-        style: Theme.of(context).textTheme.bodySmall,
+        '${QrParser.label(type)} · ${AppUtils.timeAgo(record.createdAt)}',
+        style: TextStyle(
+          fontSize: 13,
+          color: context.colors.iosSecondaryLabel,
+        ),
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
@@ -63,13 +82,23 @@ class QrListTile extends StatelessWidget {
             icon: Icon(
               record.isFavorite ? Icons.star : Icons.star_border,
               size: 20,
-              color: record.isFavorite ? Colors.amber : null,
+              color: record.isFavorite ? context.colors.iosWarning : context.colors.iosSecondaryLabel,
             ),
-            onPressed: onFavoriteToggle,
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              onFavoriteToggle();
+            },
           ),
           IconButton(
-            icon: const Icon(Icons.delete_outline, size: 20),
-            onPressed: onDelete,
+            icon: Icon(
+              Icons.delete_outline,
+              size: 20,
+              color: context.colors.iosDestructive,
+            ),
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              onDelete();
+            },
           ),
         ],
       ),
@@ -104,7 +133,7 @@ class _QrDetailSheetState extends State<_QrDetailSheet> with GallerySaveMixin {
     if (!mounted) return;
     if (!ok) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(AppStrings.errorShare)),
+        SnackBar(content: Text(AppStrings.errorShare)),
       );
     }
   }
@@ -112,8 +141,6 @@ class _QrDetailSheetState extends State<_QrDetailSheet> with GallerySaveMixin {
   Future<void> _saveToGallery() async {
     if (_isSaving) return;
     setState(() => _isSaving = true);
-    // Capture the root ScaffoldMessenger before any await so the snackbar
-    // shows on the main Scaffold even after the bottom sheet is dismissed.
     final messenger = ScaffoldMessenger.of(context);
     await saveToGalleryWithPermission(_repaintKey, messenger: messenger);
     if (mounted) setState(() => _isSaving = false);
@@ -132,111 +159,206 @@ class _QrDetailSheetState extends State<_QrDetailSheet> with GallerySaveMixin {
           // Header row
           Row(
             children: [
-              Text(
-                '${QrParser.icon(type)}  ${QrParser.label(type)}',
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: context.colors.iosBlue.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      QrParser.icon(type),
+                      style: TextStyle(fontSize: 14),
                     ),
+                    SizedBox(width: 6),
+                    Text(
+                      QrParser.label(type),
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: context.colors.iosBlue,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const Spacer(),
+              Spacer(),
               IconButton(
                 icon: Icon(
                   widget.record.isFavorite ? Icons.star : Icons.star_border,
-                  color: widget.record.isFavorite ? Colors.amber : null,
+                  color: widget.record.isFavorite ? context.colors.iosWarning : context.colors.iosSecondaryLabel,
                 ),
                 onPressed: () {
+                  HapticFeedback.lightImpact();
                   widget.onFavoriteToggle();
                   Navigator.pop(context);
                 },
               ),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => Navigator.pop(context),
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: context.colors.iosSecondaryBg,
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  icon: Icon(Icons.close, size: 18, color: context.colors.iosSecondaryLabel),
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    Navigator.pop(context);
+                  },
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          // QR image with repaint boundary
-          Center(
+          SizedBox(height: 24),
+          
+          // QR image
+          Container(
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: context.colors.iosSurface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: context.colors.iosSeparator.withValues(alpha: 0.3),
+                width: 0.5,
+              ),
+            ),
             child: QrView(
               data: widget.record.data,
-              size: 180,
+              size: 200,
               repaintKey: _repaintKey,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 20),
+          
           // Data preview
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainerLow,
-              borderRadius: BorderRadius.circular(8),
+              color: context.colors.iosSurface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: context.colors.iosSeparator.withValues(alpha: 0.3), width: 0.5),
             ),
-            child: Text(widget.record.data,
-                style: Theme.of(context).textTheme.bodyMedium),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.record.data,
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: context.colors.iosLabel,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  AppUtils.timeAgo(widget.record.createdAt),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: context.colors.iosSecondaryLabel,
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            AppUtils.timeAgo(widget.record.createdAt),
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          const SizedBox(height: 16),
+          SizedBox(height: 24),
+          
           // Row 1: Copy | Delete
           Row(
             children: [
               Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () async {
-                    await Clipboard.setData(
-                        ClipboardData(text: widget.record.data));
-                    if (!context.mounted) return;
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Copied to clipboard')),
-                    );
-                  },
-                  icon: const Icon(Icons.copy, size: 18),
-                  label: const Text('Copy'),
+                child: SizedBox(
+                  height: 44,
+                  child: OutlinedButton.icon(
+                    onPressed: () async {
+                      HapticFeedback.lightImpact();
+                      await Clipboard.setData(ClipboardData(text: widget.record.data));
+                      if (!context.mounted) return;
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Copied to clipboard')),
+                      );
+                    },
+                    icon: Icon(Icons.copy_rounded, size: 18),
+                    label: Text('Copy'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: context.colors.iosBlue,
+                      side: BorderSide(color: context.colors.iosBlue, width: 1),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 12),
               Expanded(
-                child: FilledButton.icon(
-                  onPressed: widget.onDelete,
-                  icon: const Icon(Icons.delete_outline, size: 18),
-                  label: const Text('Delete'),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.error,
-                    foregroundColor: Theme.of(context).colorScheme.onError,
+                child: SizedBox(
+                  height: 44,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      widget.onDelete();
+                    },
+                    icon: Icon(Icons.delete_outline, size: 18),
+                    label: Text('Delete'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: context.colors.iosDestructive,
+                      side: BorderSide(color: context.colors.iosDestructive, width: 1),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          // Row 2: Share | Save to Gallery
+          SizedBox(height: 12),
+          
+          // Row 2: Share | Gallery
           Row(
             children: [
               Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: _share,
-                  icon: const Icon(Icons.share_outlined, size: 18),
-                  label: const Text(AppStrings.shareQr),
+                child: SizedBox(
+                  height: 44,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      _share();
+                    },
+                    icon: Icon(Icons.share_outlined, size: 18),
+                    label: Text(AppStrings.shareQr),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: context.colors.iosBlue,
+                      side: BorderSide(color: context.colors.iosBlue, width: 1),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 12),
               Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: _isSaving ? null : _saveToGallery,
-                  icon: _isSaving
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.download_outlined, size: 18),
-                  label: const Text(AppStrings.saveToGallery),
+                child: SizedBox(
+                  height: 44,
+                  child: OutlinedButton.icon(
+                    onPressed: _isSaving ? null : () {
+                      HapticFeedback.lightImpact();
+                      _saveToGallery();
+                    },
+                    icon: _isSaving
+                        ? SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: context.colors.iosBlue),
+                          )
+                        : Icon(Icons.download_rounded, size: 18),
+                    label: Text(AppStrings.saveToGallery),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: context.colors.iosBlue,
+                      side: BorderSide(color: context.colors.iosBlue, width: 1),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
                 ),
               ),
             ],

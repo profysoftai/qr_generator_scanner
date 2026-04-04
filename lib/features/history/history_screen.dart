@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_generator_scanner/core/constants/app_colors.dart';
 import 'package:qr_generator_scanner/core/constants/app_strings.dart';
 import 'package:qr_generator_scanner/core/services/qr_repository.dart';
 import 'package:qr_generator_scanner/shared/models/qr_record.dart';
@@ -7,13 +9,14 @@ import 'package:qr_generator_scanner/shared/widgets/empty_state.dart';
 import 'package:qr_generator_scanner/shared/widgets/qr_list_tile.dart';
 
 class HistoryScreen extends StatefulWidget {
-  const HistoryScreen({super.key});
+  HistoryScreen({super.key});
 
   @override
   State<HistoryScreen> createState() => _HistoryScreenState();
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
+  // ── State — DO NOT TOUCH ──────────────────────────────────
   bool _showFavorites = false;
   String _searchQuery = '';
   final _searchController = TextEditingController();
@@ -24,6 +27,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     super.dispose();
   }
 
+  // ── Logic — DO NOT TOUCH ──────────────────────────────────
   List<QrRecord> _filtered(QrRepository repo) {
     final base =
         _showFavorites ? repo.favoriteRecords : repo.scannedRecords;
@@ -35,18 +39,78 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Future<void> _confirmClearAll() async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Clear History'),
-        content: const Text(
-            'Delete all scanned history? This cannot be undone.'),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel')),
-          FilledButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Delete')),
-        ],
+      builder: (_) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        backgroundColor: context.colors.iosSurface,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(24, 24, 24, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Clear History',
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                  color: context.colors.iosLabel,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Delete all scanned history?\nThis cannot be undone.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: context.colors.iosSecondaryLabel,
+                  height: 1.4,
+                ),
+              ),
+              SizedBox(height: 20),
+              Divider(height: 0.5, thickness: 0.5, color: context.colors.iosSeparator),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.pop(context, false);
+                      },
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: context.colors.iosBlue,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 0.5,
+                    height: 44,
+                    color: context.colors.iosSeparator,
+                  ),
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.pop(context, true);
+                      },
+                      child: Text(
+                        'Delete',
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: context.colors.iosDestructive,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
     if (confirm == true && mounted) {
@@ -54,6 +118,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     }
   }
 
+  // ── UI REPLACED — logic preserved above ───────────────────
   @override
   Widget build(BuildContext context) {
     final repo = context.watch<QrRepository>();
@@ -61,80 +126,148 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final count = records.length;
 
     return Scaffold(
+      backgroundColor: context.colors.iosGroupedBg,
       appBar: AppBar(
-        title: const Text(AppStrings.history),
+        backgroundColor: context.colors.iosGroupedBg,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+        title: Text(
+          'History',
+          style: TextStyle(
+            fontSize: 34,
+            fontWeight: FontWeight.w700,
+            color: context.colors.iosLabel,
+            letterSpacing: 0.37,
+          ),
+        ),
         actions: [
           if (!_showFavorites && repo.scannedRecords.isNotEmpty)
             IconButton(
-              icon: const Icon(Icons.delete_sweep_outlined),
+              icon: Icon(Icons.delete_sweep_outlined),
               tooltip: AppStrings.deleteAll,
-              onPressed: _confirmClearAll,
+              color: context.colors.iosDestructive,
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                _confirmClearAll();
+              },
             ),
         ],
       ),
       body: Column(
         children: [
-          // Tab toggle
+          // ── iOS Segmented Control ───────────────────────────
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _TabButton(
-                    label: AppStrings.scanned,
-                    selected: !_showFavorites,
-                    onTap: () => setState(() {
-                      _showFavorites = false;
-                      _searchQuery = '';
-                      _searchController.clear();
-                    }),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _TabButton(
-                    label: AppStrings.favorites,
-                    selected: _showFavorites,
-                    onTap: () => setState(() {
-                      _showFavorites = true;
-                      _searchQuery = '';
-                      _searchController.clear();
-                    }),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Search bar
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search...',
-                prefixIcon: const Icon(Icons.search, size: 20),
-                isDense: true,
-                contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: Container(
+              height: 32,
+              padding: EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                color: context.colors.iosSecondaryBg,
+                borderRadius: BorderRadius.circular(9),
               ),
-              onChanged: (v) => setState(() => _searchQuery = v),
+              child: Row(
+                children: [
+                  _buildSegment(
+                    label: 'All Scanned',
+                    selected: !_showFavorites,
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      setState(() {
+                        _showFavorites = false;
+                        _searchQuery = '';
+                        _searchController.clear();
+                      });
+                    },
+                  ),
+                  _buildSegment(
+                    label: 'Favorites',
+                    selected: _showFavorites,
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      setState(() {
+                        _showFavorites = true;
+                        _searchQuery = '';
+                        _searchController.clear();
+                      });
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
-          // Item count
+
+          // ── iOS Search Bar ────────────────────────────────
+          Padding(
+            padding: EdgeInsets.fromLTRB(16, 10, 16, 0),
+            child: SizedBox(
+              height: 36,
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  hintStyle: TextStyle(
+                    color: context.colors.iosSecondaryLabel,
+                    fontSize: 16,
+                  ),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    size: 20,
+                    color: context.colors.iosSecondaryLabel,
+                  ),
+                  suffixIcon: _searchQuery.isNotEmpty
+                      ? GestureDetector(
+                          onTap: () {
+                            _searchController.clear();
+                            setState(() => _searchQuery = '');
+                          },
+                          child: Icon(
+                            Icons.cancel,
+                            size: 18,
+                            color: context.colors.iosSecondaryLabel,
+                          ),
+                        )
+                      : null,
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 8),
+                  filled: true,
+                  fillColor: context.colors.iosTertiaryLabel.withValues(alpha: 0.15),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+                style: TextStyle(fontSize: 16, color: context.colors.iosLabel),
+                onChanged: (v) => setState(() => _searchQuery = v),
+              ),
+            ),
+          ),
+
+          // ── Item count ────────────────────────────────────
           if (records.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 10, 16, 2),
+              padding: EdgeInsets.fromLTRB(16, 10, 16, 8),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   '$count ${count == 1 ? AppStrings.item : AppStrings.items}',
-                  style: Theme.of(context).textTheme.bodySmall,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: context.colors.iosSecondaryLabel,
+                  ),
                 ),
               ),
             ),
-          // List
+
+          // ── List (iOS grouped style) ──────────────────────
           Expanded(
             child: records.isEmpty
                 ? EmptyState(
@@ -145,18 +278,43 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             : AppStrings.noHistoryYet,
                     icon: _showFavorites ? Icons.star_border : Icons.history,
                   )
-                : ListView.separated(
-                    itemCount: records.length,
-                    separatorBuilder: (context, index) =>
-                        const Divider(height: 1, indent: 16),
-                    itemBuilder: (context, i) {
-                      final r = records[i];
-                      return QrListTile(
-                        record: r,
-                        onDelete: () =>
-                            context.read<QrRepository>().delete(r.id),
-                        onFavoriteToggle: () =>
-                            context.read<QrRepository>().toggleFavorite(r.id),
+                : ListView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: 1, // single grouped card
+                    itemBuilder: (context, _) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: context.colors.iosSurface,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: context.colors.iosSeparator.withValues(alpha: 0.3),
+                            width: 0.5,
+                          ),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child: Column(
+                          children: List.generate(records.length, (i) {
+                            final r = records[i];
+                            return Column(
+                              children: [
+                                QrListTile(
+                                  record: r,
+                                  onDelete: () =>
+                                      context.read<QrRepository>().delete(r.id),
+                                  onFavoriteToggle: () =>
+                                      context.read<QrRepository>().toggleFavorite(r.id),
+                                ),
+                                if (i < records.length - 1)
+                                  Divider(
+                                    height: 0.5,
+                                    thickness: 0.5,
+                                    indent: 60,
+                                    color: context.colors.iosSeparator,
+                                  ),
+                              ],
+                            );
+                          }),
+                        ),
                       );
                     },
                   ),
@@ -165,36 +323,42 @@ class _HistoryScreenState extends State<HistoryScreen> {
       ),
     );
   }
-}
 
-class _TabButton extends StatelessWidget {
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _TabButton(
-      {required this.label, required this.selected, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          color: selected
-              ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.surfaceContainerLow,
-          borderRadius: BorderRadius.circular(24),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          label,
-          style: TextStyle(
-            color: selected
-                ? Theme.of(context).colorScheme.onPrimary
-                : Theme.of(context).colorScheme.onSurface,
-            fontWeight: FontWeight.w500,
+  // ── iOS Segmented Control segment builder ──────────────────
+  Widget _buildSegment({
+    required String label,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: selected ? context.colors.iosBlue : Colors.transparent,
+            borderRadius: BorderRadius.circular(7),
+            boxShadow: selected
+                ? [
+                    BoxShadow(
+                      color: context.colors.iosBlue.withValues(alpha: 0.3),
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+              color: selected
+                  ? Colors.white
+                  : context.colors.iosSecondaryLabel,
+            ),
           ),
         ),
       ),
