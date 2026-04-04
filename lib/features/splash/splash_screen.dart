@@ -133,20 +133,23 @@ class _MainContent extends StatelessWidget {
           width: 100,
           height: 100,
           decoration: BoxDecoration(
-            color: const Color(0xFF007AFF),
             borderRadius: BorderRadius.circular(22),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF007AFF).withValues(alpha: 0.3),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 24,
                 offset: const Offset(0, 8),
               ),
             ],
           ),
-          child: const Icon(
-            Icons.qr_code_2,
-            size: 52,
-            color: Colors.white,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(22),
+            child: Image.asset(
+              'assets/logo.png',
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         const SizedBox(height: 28),
