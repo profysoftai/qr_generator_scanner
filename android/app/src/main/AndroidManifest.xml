@@ -21,6 +21,7 @@
         android:label="QR Generator &amp; Scanner"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
+        android:enableOnBackInvokedCallback="true"
         tools:replace="android:label">
         <activity
             android:name=".MainActivity"

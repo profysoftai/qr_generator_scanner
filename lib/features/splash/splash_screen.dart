@@ -13,7 +13,7 @@ const kSepLight = Color(0xFFC6C6C8);
 const kSepDark = Color(0xFF38383A);
 
 class SplashScreen extends StatefulWidget {
-  SplashScreen({super.key});
+  const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();

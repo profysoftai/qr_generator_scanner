@@ -13,7 +13,7 @@ import 'package:qr_generator_scanner/shared/widgets/theme_toggle.dart';
 class HomeScreen extends StatelessWidget {
   final void Function(int index) onNavigate;
 
-  HomeScreen({super.key, required this.onNavigate});
+  const HomeScreen({super.key, required this.onNavigate});
 
   @override
   Widget build(BuildContext context) {

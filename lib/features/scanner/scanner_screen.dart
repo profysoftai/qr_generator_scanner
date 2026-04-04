@@ -16,7 +16,7 @@ import 'package:qr_generator_scanner/shared/models/qr_record.dart';
 import 'package:qr_generator_scanner/shared/widgets/scan_result_sheet.dart';
 
 class ScannerScreen extends StatefulWidget {
-  ScannerScreen({super.key});
+  const ScannerScreen({super.key});
 
   @override
   State<ScannerScreen> createState() => _ScannerScreenState();

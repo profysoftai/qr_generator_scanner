@@ -7,7 +7,7 @@ class QrView extends StatelessWidget {
   final double size;
   final GlobalKey? repaintKey;
 
-  QrView({
+  const QrView({
     super.key,
     required this.data,
     this.size = 220,

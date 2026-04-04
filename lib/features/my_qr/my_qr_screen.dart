@@ -9,7 +9,7 @@ import 'package:qr_generator_scanner/shared/widgets/qr_list_tile.dart';
 class MyQrScreen extends StatelessWidget {
   final VoidCallback? onCreateQr;
 
-  MyQrScreen({super.key, this.onCreateQr});
+  const MyQrScreen({super.key, this.onCreateQr});
 
   @override
   Widget build(BuildContext context) {

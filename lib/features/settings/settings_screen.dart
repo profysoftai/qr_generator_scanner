@@ -4,9 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_generator_scanner/core/constants/app_colors.dart';
 import 'package:qr_generator_scanner/core/services/settings_provider.dart';
+import 'package:qr_generator_scanner/features/settings/privacy_policy_screen.dart';
+import 'package:qr_generator_scanner/features/settings/terms_of_use_screen.dart';
+import 'package:qr_generator_scanner/features/settings/faq_help_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
-  SettingsScreen({super.key});
+  const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -129,27 +132,146 @@ class SettingsScreen extends StatelessWidget {
                 width: 0.5,
               ),
             ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Version',
-                    style: TextStyle(
-                      fontSize: 17,
-                      color: context.colors.iosLabel,
+            child: Column(
+              children: [
+                // Version
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Version',
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: context.colors.iosLabel,
+                        ),
+                      ),
+                      Text(
+                        '1.0.0',
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: context.colors.iosSecondaryLabel,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Divider(
+                  height: 1,
+                  thickness: 0.5,
+                  color: context.colors.iosSeparator.withValues(alpha: 0.5),
+                  indent: 16,
+                ),
+                // Privacy Policy — in-app navigation
+                InkWell(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const PrivacyPolicyScreen(),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Privacy Policy',
+                          style: TextStyle(
+                            fontSize: 17,
+                            color: context.colors.iosLabel,
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                          color: context.colors.iosSecondaryLabel,
+                        ),
+                      ],
                     ),
                   ),
-                  Text(
-                    '1.0.0',
-                    style: TextStyle(
-                      fontSize: 17,
-                      color: context.colors.iosSecondaryLabel,
+                ),
+                Divider(
+                  height: 1,
+                  thickness: 0.5,
+                  color: context.colors.iosSeparator.withValues(alpha: 0.5),
+                  indent: 16,
+                ),
+                // Terms of Use — in-app navigation
+                InkWell(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const TermsOfUseScreen(),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Terms of Use',
+                          style: TextStyle(
+                            fontSize: 17,
+                            color: context.colors.iosLabel,
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                          color: context.colors.iosSecondaryLabel,
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+                Divider(
+                  height: 1,
+                  thickness: 0.5,
+                  color: context.colors.iosSeparator.withValues(alpha: 0.5),
+                  indent: 16,
+                ),
+                // FAQ / Help — in-app navigation
+                InkWell(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const FaqHelpScreen(),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'FAQ / Help',
+                          style: TextStyle(
+                            fontSize: 17,
+                            color: context.colors.iosLabel,
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                          color: context.colors.iosSecondaryLabel,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

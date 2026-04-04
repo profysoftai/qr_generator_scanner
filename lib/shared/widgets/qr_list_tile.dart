@@ -14,7 +14,7 @@ class QrListTile extends StatelessWidget {
   final VoidCallback onDelete;
   final VoidCallback onFavoriteToggle;
 
-  QrListTile({
+  const QrListTile({
     super.key,
     required this.record,
     required this.onDelete,

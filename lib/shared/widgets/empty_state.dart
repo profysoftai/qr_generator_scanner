@@ -5,7 +5,7 @@ class EmptyState extends StatelessWidget {
   final String message;
   final IconData icon;
 
-  EmptyState({
+  const EmptyState({
     super.key,
     required this.message,
     this.icon = Icons.inbox_outlined,

@@ -9,7 +9,7 @@ import 'package:qr_generator_scanner/shared/widgets/empty_state.dart';
 import 'package:qr_generator_scanner/shared/widgets/qr_list_tile.dart';
 
 class HistoryScreen extends StatefulWidget {
-  HistoryScreen({super.key});
+  const HistoryScreen({super.key});
 
   @override
   State<HistoryScreen> createState() => _HistoryScreenState();

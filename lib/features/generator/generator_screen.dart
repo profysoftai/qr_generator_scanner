@@ -13,7 +13,7 @@ import 'package:qr_generator_scanner/shared/widgets/gallery_save_mixin.dart';
 import 'package:qr_generator_scanner/shared/widgets/qr_view.dart';
 
 class GeneratorScreen extends StatefulWidget {
-  GeneratorScreen({super.key});
+  const GeneratorScreen({super.key});
 
   @override
   State<GeneratorScreen> createState() => _GeneratorScreenState();

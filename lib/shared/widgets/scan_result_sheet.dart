@@ -11,7 +11,7 @@ class ScanResultSheet extends StatelessWidget {
   final QrRecord record;
   final VoidCallback onScanAgain;
 
-  ScanResultSheet({
+  const ScanResultSheet({
     super.key,
     required this.record,
     required this.onScanAgain,
