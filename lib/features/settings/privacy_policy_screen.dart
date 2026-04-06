@@ -70,7 +70,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
               number: '1',
               title: 'Introduction',
               paragraphs: [
-                'This privacy policy is applicable to the QR TOOLKIT PRO app (hereinafter referred to as "Application") for mobile devices, which was developed by GAMENCY TECH PRIVATE LIMITED (hereinafter referred to as "Service Provider") as an Ad Supported service. This service is provided "AS IS".',
+                'This privacy policy is applicable to the QR Generator & Scanner app (hereinafter referred to as "Application") for mobile devices, which was developed by GAMENCY TECH PRIVATE LIMITED (hereinafter referred to as "Service Provider") as a free service. This service is provided "AS IS".',
               ],
             ),
 
@@ -79,8 +79,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
               title: 'Information Usage',
               paragraphs: [
                 'What information does the Application obtain and how is it used?',
-                'The Application acquires the information you supply when you download and register the Application. Registration with the Service Provider is not mandatory. However, bear in mind that you might not be able to utilize some of the features offered by the Application unless you register with them.',
-                'The Service Provider may also use the information you provided them to contact you from time to time to provide you with important information, required notices and marketing promotions.',
+                'The Application does not require registration. All QR codes you scan or generate are stored locally on your device only and are never transmitted to any server.',
               ],
             ),
 
@@ -89,7 +88,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
               title: 'Automatic Data Collection',
               paragraphs: [
                 'What information does the Application collect automatically?',
-                'In addition, the Application may collect certain information automatically, including, but not limited to, the type of mobile device you use, your mobile devices unique device ID, the IP address of your mobile device, your mobile operating system, the type of mobile Internet browsers you use, and information about the way you use the Application.',
+                'The Application does not collect any information automatically. No usage data, device identifiers, or analytics are gathered.',
               ],
             ),
 
@@ -116,22 +115,18 @@ class PrivacyPolicyScreen extends StatelessWidget {
               title: 'Third-Party Access',
               paragraphs: [
                 'Do third parties see and/or have access to information obtained by the Application?',
-                'Only aggregated, anonymized data is periodically transmitted to external services to aid the Service Provider in improving the Application and their service. The Service Provider may share your information with third parties in the ways that are described in this privacy statement.',
-                'Please note that the Application utilizes third-party services that have their own Privacy Policy about handling data. Below are the third-party service providers used by the Application:',
+                'No. The Application does not share any data with third parties. All data remains on your device.',
+                'The Application uses the following system-level services provided by the device platform:',
               ],
               bulletPoints: [
-                'Google Play Services',
-                'AdMob',
-                'Google Analytics for Firebase',
-                'Firebase Crashlytics',
+                'Google Play Services (Android platform)',
               ],
               footerParagraphs: [
-                'The Service Provider may disclose User Provided and Automatically Collected Information:',
+                'The Service Provider will not disclose any user information to third parties except as required by law.',
               ],
               secondaryBulletPoints: [
                 'as required by law, such as to comply with a subpoena, or similar legal process;',
-                'when they believe in good faith that disclosure is necessary to protect their rights, protect your safety or the safety of others, investigate fraud, or respond to a government request;',
-                'with their trusted services providers who work on their behalf, do not have an independent use of the information we disclose to them, and have agreed to adhere to the rules set forth in this privacy statement.',
+                'when necessary to protect the rights or safety of users.',
               ],
             ),
 
@@ -149,8 +144,8 @@ class PrivacyPolicyScreen extends StatelessWidget {
               title: 'Data Retention & Management',
               paragraphs: [
                 'What is the data retention policy and how can you manage your information?',
-                'The Service Provider will retain User Provided data for as long as you use the Application and for a reasonable time thereafter. The Service Provider will retain Automatically Collected information for up to 24 months and thereafter may store it in aggregate.',
-                'If you\'d like the Service Provider to delete User Provided Data that you have provided via the Application, please contact them at gamencysupport@protonmail.com and we will respond in a reasonable time. Please note that some or all of the User Provided Data may be required in order for the Application to function properly.',
+                'The Service Provider will retain User Provided data for as long as you use the Application. Since all data is stored locally on your device, you can delete it at any time from within the app.',
+                'If you have any questions about data management, please contact us at gamencysupport@protonmail.com.',
               ],
             ),
 

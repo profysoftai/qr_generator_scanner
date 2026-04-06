@@ -8,7 +8,8 @@ class AppUtils {
   }
 
   static bool isValidUrl(String value) {
-    return Uri.tryParse(value)?.hasAbsolutePath ?? false;
+    final uri = Uri.tryParse(value);
+    return uri != null && uri.hasScheme && uri.hasAuthority;
   }
 
   static String truncate(String value, {int max = 30}) {

@@ -14,6 +14,8 @@
         android:maxSdkVersion="32" />
     <!-- Android 13+ granular media permission -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <!-- gal package: required for saving to gallery on Android 13+ -->
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
 
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
@@ -21,6 +23,7 @@
         android:label="QR Generator &amp; Scanner"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:enableOnBackInvokedCallback="true"
         tools:replace="android:label">
         <activity

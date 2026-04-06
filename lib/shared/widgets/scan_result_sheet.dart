@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:qr_generator_scanner/core/constants/app_colors.dart';
 import 'package:qr_generator_scanner/core/constants/app_strings.dart';
@@ -35,7 +36,7 @@ class ScanResultSheet extends StatelessWidget {
   }
 
   Future<void> _openUrl(BuildContext context) async {
-    final connectivity = ConnectivityService();
+    final connectivity = context.read<ConnectivityService>();
     final online = await connectivity.isOnline();
 
     if (!context.mounted) return;
