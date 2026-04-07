@@ -66,9 +66,16 @@ class ScanResultSheet extends StatelessWidget {
       return;
     }
 
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
-    if (!context.mounted) return;
-    Navigator.pop(context);
+    try {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!context.mounted) return;
+      Navigator.pop(context);
+    } catch (_) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppStrings.errorGeneric)),
+      );
+    }
   }
 
   @override

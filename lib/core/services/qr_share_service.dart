@@ -30,12 +30,13 @@ class QrShareService {
     }
   }
 
-  /// Writes bytes to a fixed temp file (overwriting each time — no accumulation).
+  /// Writes bytes to a uniquely named temp file to avoid race conditions.
   static Future<File?> _writeTempFile(List<int> bytes,
-      {String name = 'qr_share'}) async {
+      {String? name}) async {
     try {
       final dir = await getTemporaryDirectory();
-      final file = File('${dir.path}/$name.png');
+      final fileName = name ?? 'qr_${DateTime.now().millisecondsSinceEpoch}';
+      final file = File('${dir.path}/$fileName.png');
       await file.writeAsBytes(bytes, flush: true);
       return file;
     } catch (_) {
@@ -44,7 +45,9 @@ class QrShareService {
   }
 
   /// Shares the QR image via the system share sheet.
-  /// Temp file is deleted after the share sheet is dismissed.
+  /// Temp file is NOT deleted immediately — the OS cleans up /tmp.
+  /// Deleting synchronously after shareXFiles risks the receiving app
+  /// reading a deleted file on some Android versions.
   static Future<bool> share(GlobalKey key,
       {String subject = 'QR Code'}) async {
     final bytes = await _capture(key);
@@ -59,8 +62,6 @@ class QrShareService {
       return true;
     } catch (_) {
       return false;
-    } finally {
-      try { file.deleteSync(); } catch (_) {}
     }
   }
 
