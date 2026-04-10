@@ -251,7 +251,7 @@ class _ScannerScreenState extends State<ScannerScreen>
           MobileScanner(
             controller: _controller!,
             onDetect: _onDetect,
-            errorBuilder: (context, error, child) => _CameraError(
+            errorBuilder: (context, error) => _CameraError(
               onRetry: () {
                 _controller?.dispose();
                 _controller = null;

@@ -49,3 +49,6 @@ analyze_results.txt
 build_error.txt
 output_icons.txt
 RELEASE_AUDIT.md
+
+# Dart obfuscation debug symbols — back these up externally, never commit
+build/debug-info/

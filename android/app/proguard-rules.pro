@@ -40,3 +40,31 @@
 -keepattributes *Annotation*
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception
+
+# permission_handler
+-keep class com.baseflow.permissionhandler.** { *; }
+-dontwarn com.baseflow.permissionhandler.**
+
+# gal
+-keep class com.natsuk2002.gal.** { *; }
+-dontwarn com.natsuk2002.gal.**
+
+# device_info_plus
+-keep class dev.fluttercommunity.plus.device_info.** { *; }
+-dontwarn dev.fluttercommunity.plus.device_info.**
+
+# connectivity_plus
+-keep class dev.fluttercommunity.plus.connectivity.** { *; }
+-dontwarn dev.fluttercommunity.plus.connectivity.**
+
+# share_plus
+-keep class dev.fluttercommunity.plus.share.** { *; }
+-dontwarn dev.fluttercommunity.plus.share.**
+
+# url_launcher
+-keep class io.flutter.plugins.urllauncher.** { *; }
+-dontwarn io.flutter.plugins.urllauncher.**
+
+# path_provider
+-keep class io.flutter.plugins.pathprovider.** { *; }
+-dontwarn io.flutter.plugins.pathprovider.**

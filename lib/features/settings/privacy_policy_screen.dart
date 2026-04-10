@@ -54,7 +54,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  'Effective Date: 2026-04-04',
+                  'Effective Date: 2025-01-01',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
@@ -201,7 +201,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.only(bottom: 8),
                 child: Text(
-                  '© 2026 GAMENCY TECH PRIVATE LIMITED. All rights reserved.',
+                  '© 2025 GAMENCY TECH PRIVATE LIMITED. All rights reserved.',
                   style: TextStyle(
                     fontSize: 13,
                     color: colors.iosTertiaryLabel,

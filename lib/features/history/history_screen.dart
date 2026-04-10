@@ -278,45 +278,55 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             : AppStrings.noHistoryYet,
                     icon: _showFavorites ? Icons.star_border : Icons.history,
                   )
-                : ListView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: 1, // single grouped card
-                    itemBuilder: (context, _) {
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: context.colors.iosSurface,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: context.colors.iosSeparator.withValues(alpha: 0.3),
-                            width: 0.5,
+                : ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: ListView.separated(
+                      padding: EdgeInsets.fromLTRB(16, 0, 16, 24),
+                      itemCount: records.length,
+                      separatorBuilder: (_, i) => Divider(
+                        height: 0.5,
+                        thickness: 0.5,
+                        indent: 60,
+                        color: context.colors.iosSeparator,
+                      ),
+                      itemBuilder: (context, i) {
+                        final r = records[i];
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: context.colors.iosSurface,
+                            border: Border(
+                              left: BorderSide(
+                                color: context.colors.iosSeparator.withValues(alpha: 0.3),
+                                width: 0.5,
+                              ),
+                              right: BorderSide(
+                                color: context.colors.iosSeparator.withValues(alpha: 0.3),
+                                width: 0.5,
+                              ),
+                              top: i == 0
+                                  ? BorderSide(
+                                      color: context.colors.iosSeparator.withValues(alpha: 0.3),
+                                      width: 0.5,
+                                    )
+                                  : BorderSide.none,
+                              bottom: i == records.length - 1
+                                  ? BorderSide(
+                                      color: context.colors.iosSeparator.withValues(alpha: 0.3),
+                                      width: 0.5,
+                                    )
+                                  : BorderSide.none,
+                            ),
                           ),
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        child: Column(
-                          children: List.generate(records.length, (i) {
-                            final r = records[i];
-                            return Column(
-                              children: [
-                                QrListTile(
-                                  record: r,
-                                  onDelete: () =>
-                                      context.read<QrRepository>().delete(r.id),
-                                  onFavoriteToggle: () =>
-                                      context.read<QrRepository>().toggleFavorite(r.id),
-                                ),
-                                if (i < records.length - 1)
-                                  Divider(
-                                    height: 0.5,
-                                    thickness: 0.5,
-                                    indent: 60,
-                                    color: context.colors.iosSeparator,
-                                  ),
-                              ],
-                            );
-                          }),
-                        ),
-                      );
-                    },
+                          child: QrListTile(
+                            record: r,
+                            onDelete: () =>
+                                context.read<QrRepository>().delete(r.id),
+                            onFavoriteToggle: () =>
+                                context.read<QrRepository>().toggleFavorite(r.id),
+                          ),
+                        );
+                      },
+                    ),
                   ),
           ),
         ],

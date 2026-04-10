@@ -55,9 +55,11 @@ class QrShareService {
     final file = await _writeTempFile(bytes);
     if (file == null) return false;
     try {
-      await Share.shareXFiles(
-        [XFile(file.path, mimeType: 'image/png')],
-        subject: subject,
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(file.path, mimeType: 'image/png')],
+          subject: subject,
+        ),
       );
       return true;
     } catch (_) {

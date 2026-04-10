@@ -4,6 +4,8 @@
 	<dict>
 		<key>NSCameraUsageDescription</key>
 		<string>This app needs camera access to scan QR codes.</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>This app needs location access to generate location QR codes.</string>
 		<key>NSPhotoLibraryAddUsageDescription</key>
 		<string>This app needs photo library access to save QR codes to your gallery.</string>
 		<key>NSPhotoLibraryUsageDescription</key>

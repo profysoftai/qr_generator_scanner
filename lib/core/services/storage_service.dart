@@ -7,9 +7,16 @@ class StorageService {
   static const _themeKey = 'theme_mode';
   static const _hasSelectedThemeKey = 'has_selected_theme';
 
+  SharedPreferences? _prefs;
+
+  Future<SharedPreferences> get _instance async {
+    _prefs ??= await SharedPreferences.getInstance();
+    return _prefs!;
+  }
+
   Future<void> saveRecords(List<Map<String, dynamic>> records) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = await _instance;
       await prefs.setString(_recordsKey, jsonEncode(records));
     } catch (_) {
       // Silently fail — data will be re-saved on next write
@@ -19,7 +26,7 @@ class StorageService {
   /// Returns empty list on any decode failure (corrupted data fallback).
   Future<List<Map<String, dynamic>>> loadRecords() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = await _instance;
       final raw = prefs.getString(_recordsKey);
       if (raw == null || raw.isEmpty) return [];
       final list = jsonDecode(raw);
@@ -32,14 +39,14 @@ class StorageService {
 
   Future<void> saveScanHistoryEnabled(bool value) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = await _instance;
       await prefs.setBool(_saveScanHistoryKey, value);
     } catch (_) {}
   }
 
   Future<bool> loadSaveScanHistory() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = await _instance;
       return prefs.getBool(_saveScanHistoryKey) ?? true;
     } catch (_) {
       return true;
@@ -48,14 +55,14 @@ class StorageService {
 
   Future<void> saveThemeMode(String mode) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = await _instance;
       await prefs.setString(_themeKey, mode);
     } catch (_) {}
   }
 
   Future<String> loadThemeMode() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = await _instance;
       return prefs.getString(_themeKey) ?? 'system';
     } catch (_) {
       return 'system';
@@ -64,14 +71,14 @@ class StorageService {
 
   Future<void> saveHasSelectedTheme(bool value) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = await _instance;
       await prefs.setBool(_hasSelectedThemeKey, value);
     } catch (_) {}
   }
 
   Future<bool> loadHasSelectedTheme() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = await _instance;
       return prefs.getBool(_hasSelectedThemeKey) ?? false;
     } catch (_) {
       return false;

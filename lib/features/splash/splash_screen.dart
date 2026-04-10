@@ -179,7 +179,7 @@ class _MainContent extends StatelessWidget {
         
         // Developer tag
         Text(
-          'Developed by GAMENCY TECH',
+          'Developed by GAMENCY TECH PRIVATE LIMITED',
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.bold,
