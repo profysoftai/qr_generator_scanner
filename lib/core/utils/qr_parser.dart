@@ -48,10 +48,16 @@ class QrParser {
     }
   }
 
-  /// Returns true if the scanned value is non-empty and printable.
+  /// Returns true if the scanned value is non-empty, within QR capacity,
+  /// and contains no raw control characters (\x00–\x08, \x0B–\x0C, \x0E–\x1F)
+  /// that could be injected by a maliciously crafted QR code.
   static bool isValid(String? value) {
     if (value == null) return false;
     final v = value.trim();
-    return v.isNotEmpty && v.length <= 2953; // QR max capacity
+    if (v.isEmpty || v.length > 2953) return false;
+    // Allow tab (\x09), newline (\x0A), carriage return (\x0D) — legitimate
+    // in multi-line text QRs. Reject all other C0 control characters.
+    return !v.runes.any((r) =>
+        r <= 0x1F && r != 0x09 && r != 0x0A && r != 0x0D);
   }
 }

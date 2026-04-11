@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:qr_generator_scanner/core/constants/app_colors.dart';
+import 'package:qr_generator_scanner/core/services/ad_service.dart';
 import 'package:qr_generator_scanner/core/services/qr_repository.dart';
 import 'package:qr_generator_scanner/core/services/qr_share_service.dart';
 import 'package:qr_generator_scanner/shared/models/qr_record.dart';
@@ -88,6 +89,9 @@ class _QrPreviewScreenState extends State<QrPreviewScreen>
           onTap: () {
             HapticFeedback.lightImpact();
             Navigator.pop(context);
+            // Show interstitial every time user leaves QR preview —
+            // natural break after completing a QR generation.
+            AdService.instance.onGenerateCompleted();
           },
           child: Padding(
             padding: const EdgeInsets.all(8),

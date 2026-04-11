@@ -21,7 +21,7 @@ class ThemePromptScreen extends StatelessWidget {
     // Navigate to splash screen
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => SplashScreen(),
+        pageBuilder: (context, animation, secondaryAnimation) => const SplashScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             FadeTransition(opacity: animation, child: child),
         transitionDuration: const Duration(milliseconds: 400),

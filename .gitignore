@@ -44,11 +44,15 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Android signing — NEVER commit these
+android/key.properties
+*.jks
+*.keystore
+
 # Project-specific temp and output files
 analyze_results.txt
 build_error.txt
 output_icons.txt
-RELEASE_AUDIT.md
 
 # Dart obfuscation debug symbols — back these up externally, never commit
 build/debug-info/

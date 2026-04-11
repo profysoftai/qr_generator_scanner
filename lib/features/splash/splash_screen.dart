@@ -54,7 +54,7 @@ class _SplashScreenState extends State<SplashScreen>
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => MainShell(),
+        pageBuilder: (context, animation, secondaryAnimation) => const MainShell(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             FadeTransition(opacity: animation, child: child),
         transitionDuration: const Duration(milliseconds: 350),
@@ -156,7 +156,7 @@ class _MainContent extends StatelessWidget {
         
         // Title
         Text(
-          'QR Generator & Scanner',
+          'QR TOOLKIT PRO',
           style: TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.w700,

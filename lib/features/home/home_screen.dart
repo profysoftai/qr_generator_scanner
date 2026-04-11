@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:qr_generator_scanner/core/services/ad_service.dart';
 import 'package:qr_generator_scanner/core/constants/app_colors.dart';
 import 'package:qr_generator_scanner/core/constants/app_strings.dart';
 import 'package:qr_generator_scanner/core/services/qr_repository.dart';
@@ -10,31 +12,60 @@ import 'package:qr_generator_scanner/shared/models/qr_record.dart';
 import 'package:qr_generator_scanner/shared/widgets/empty_state.dart';
 import 'package:qr_generator_scanner/shared/widgets/theme_toggle.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final void Function(int index) onNavigate;
 
   const HomeScreen({super.key, required this.onNavigate});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    AdService.instance.loadBanner();
+  }
+
+  @override
+  void dispose() {
+    AdService.instance.disposeBanner();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final repo = context.watch<QrRepository>();
     final recent = repo.recentRecords;
 
-    return Scaffold(
-      backgroundColor: context.colors.iosGroupedBg,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _Header(onNavigate: onNavigate),
-            SizedBox(height: 8),
-            _QuickActions(onNavigate: onNavigate),
-            SizedBox(height: 24),
-            _RecentActivity(recent: recent, onNavigate: onNavigate),
-            SizedBox(height: 32),
-          ],
-        ),
-      ),
+    return ValueListenableBuilder<BannerAd?>(
+      valueListenable: AdService.instance.bannerNotifier,
+      builder: (context, banner, _) {
+        return Scaffold(
+          backgroundColor: context.colors.iosGroupedBg,
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _Header(onNavigate: widget.onNavigate),
+                const SizedBox(height: 8),
+                _QuickActions(onNavigate: widget.onNavigate),
+                const SizedBox(height: 24),
+                _RecentActivity(recent: recent, onNavigate: widget.onNavigate),
+                const SizedBox(height: 32),
+              ],
+            ),
+          ),
+          // Banner only appears after it finishes loading — no empty space if it fails.
+          bottomNavigationBar: banner != null
+              ? SizedBox(
+                  height: banner.size.height.toDouble(),
+                  child: AdWidget(ad: banner),
+                )
+              : null,
+        );
+      },
     );
   }
 }
@@ -66,7 +97,7 @@ class _Header extends StatelessWidget {
                     letterSpacing: -0.4,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   'Scan or generate a QR code',
                   style: TextStyle(
@@ -77,18 +108,13 @@ class _Header extends StatelessWidget {
               ],
             ),
           ),
-          ThemeToggle(),
+          const ThemeToggle(),
         ],
       ),
     );
   }
 
-  String _greeting() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good Morning 👋';
-    if (hour < 17) return 'Good Afternoon 👋';
-    return 'Good Evening 👋';
-  }
+  String _greeting() => 'QR TOOLKIT PRO';
 }
 
 // ── Quick Actions ─────────────────────────────────────────────────────────────
@@ -108,19 +134,19 @@ class _QuickActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tiles = [
-      _TileData(Icons.qr_code_scanner, AppStrings.scanQr, AppStrings.scanQrSub, 2),
-      _TileData(Icons.qr_code_2, AppStrings.createQr, AppStrings.createQrSub, 1),
-      _TileData(Icons.history, AppStrings.history, AppStrings.historySub, 3),
-      _TileData(Icons.grid_view, AppStrings.myQrs, AppStrings.myQrsSub, 4),
-      _TileData(Icons.settings, AppStrings.settings, AppStrings.settingsSub, 5),
-      _TileData(Icons.flash_on, AppStrings.quickScan, AppStrings.quickScanSub, 2),
+      const _TileData(Icons.qr_code_scanner, AppStrings.scanQr, AppStrings.scanQrSub, 2),
+      const _TileData(Icons.qr_code_2, AppStrings.createQr, AppStrings.createQrSub, 1),
+      const _TileData(Icons.history, AppStrings.history, AppStrings.historySub, 3),
+      const _TileData(Icons.grid_view, AppStrings.myQrs, AppStrings.myQrsSub, 4),
+      const _TileData(Icons.settings, AppStrings.settings, AppStrings.settingsSub, 5),
+      const _TileData(Icons.flash_on, AppStrings.quickScan, AppStrings.quickScanSub, 2),
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 12),
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
           child: Text(
             'QUICK ACTIONS',
             style: TextStyle(
@@ -133,9 +159,9 @@ class _QuickActions extends StatelessWidget {
         ),
         GridView.builder(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          physics: const NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
@@ -165,7 +191,7 @@ class _QuickActionTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: context.colors.iosSurface,
           borderRadius: BorderRadius.circular(12),
@@ -194,7 +220,7 @@ class _QuickActionTile extends StatelessWidget {
                     color: context.colors.iosBlue,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   data.title,
                   style: TextStyle(
@@ -203,7 +229,7 @@ class _QuickActionTile extends StatelessWidget {
                     color: context.colors.iosLabel,
                   ),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
                   data.subtitle,
                   maxLines: 2,
@@ -236,7 +262,7 @@ class _RecentActivity extends StatelessWidget {
       children: [
         // Section header
         Padding(
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 12),
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -270,13 +296,13 @@ class _RecentActivity extends StatelessWidget {
 
         // Content
         if (recent.isEmpty)
-          EmptyState(
+          const EmptyState(
             message: 'No Recent Scans',
             icon: Icons.history,
           )
         else
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 16),
+            margin: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
               color: context.colors.iosSurface,
               borderRadius: BorderRadius.circular(12),
@@ -349,7 +375,7 @@ class _RecentRow extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Row(
           children: [
             // Leading icon
@@ -366,7 +392,7 @@ class _RecentRow extends StatelessWidget {
                 color: context.colors.iosBlue,
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             // Title + subtitle
             Expanded(
               child: Column(
@@ -382,7 +408,7 @@ class _RecentRow extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: 2),
+                  const SizedBox(height: 2),
                   Text(
                     QrParser.label(contentType),
                     style: TextStyle(
@@ -406,7 +432,7 @@ class _RecentRow extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(width: 4),
+            const SizedBox(width: 4),
             Icon(
               Icons.chevron_right,
               size: 16,

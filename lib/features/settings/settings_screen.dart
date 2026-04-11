@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:qr_generator_scanner/core/constants/app_colors.dart';
 import 'package:qr_generator_scanner/core/services/settings_provider.dart';
 import 'package:qr_generator_scanner/features/settings/privacy_policy_screen.dart';
-import 'package:qr_generator_scanner/features/settings/terms_of_use_screen.dart';
+import 'package:qr_generator_scanner/features/settings/terms_and_conditions_screen.dart';
 import 'package:qr_generator_scanner/features/settings/faq_help_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -34,13 +34,13 @@ class SettingsScreen extends StatelessWidget {
         ),
       ),
       body: ListView(
-        padding: EdgeInsets.only(top: 8, bottom: 40),
+        padding: const EdgeInsets.only(top: 8, bottom: 40),
         children: [
           // ── APPEARANCE section ─────────────────────────────
-          _SectionHeader(title: 'APPEARANCE'),
+          const _SectionHeader(title: 'APPEARANCE'),
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 16),
-            padding: EdgeInsets.all(16),
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: context.colors.iosSurface,
               borderRadius: BorderRadius.circular(12),
@@ -59,18 +59,18 @@ class SettingsScreen extends StatelessWidget {
                     color: context.colors.iosLabel,
                   ),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 _ThemeSelector(current: settings.themeMode),
               ],
             ),
           ),
 
-          SizedBox(height: 28),
+          const SizedBox(height: 28),
 
           // ── PREFERENCES section ────────────────────────────
-          _SectionHeader(title: 'PREFERENCES'),
+          const _SectionHeader(title: 'PREFERENCES'),
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 16),
+            margin: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
               color: context.colors.iosSurface,
               borderRadius: BorderRadius.circular(12),
@@ -80,7 +80,7 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
                   Expanded(
@@ -94,7 +94,7 @@ class SettingsScreen extends StatelessWidget {
                             color: context.colors.iosLabel,
                           ),
                         ),
-                        SizedBox(height: 2),
+                        const SizedBox(height: 2),
                         Text(
                           'Keep a log of all scanned QR codes',
                           style: TextStyle(
@@ -118,12 +118,12 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
 
-          SizedBox(height: 28),
+          const SizedBox(height: 28),
 
           // ── ABOUT section ──────────────────────────────────
-          _SectionHeader(title: 'ABOUT'),
+          const _SectionHeader(title: 'ABOUT'),
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 16),
+            margin: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
               color: context.colors.iosSurface,
               borderRadius: BorderRadius.circular(12),
@@ -136,7 +136,7 @@ class SettingsScreen extends StatelessWidget {
               children: [
                 // Version
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -175,7 +175,7 @@ class SettingsScreen extends StatelessWidget {
                     );
                   },
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -201,24 +201,24 @@ class SettingsScreen extends StatelessWidget {
                   color: context.colors.iosSeparator.withValues(alpha: 0.5),
                   indent: 16,
                 ),
-                // Terms of Use — in-app navigation
+                // Terms & Conditions — in-app navigation
                 InkWell(
                   onTap: () {
                     HapticFeedback.lightImpact();
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const TermsOfUseScreen(),
+                        builder: (_) => const TermsAndConditionsScreen(),
                       ),
                     );
                   },
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Terms of Use',
+                          'Terms & Conditions',
                           style: TextStyle(
                             fontSize: 17,
                             color: context.colors.iosLabel,
@@ -251,7 +251,7 @@ class SettingsScreen extends StatelessWidget {
                     );
                   },
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -289,7 +289,7 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       child: Text(
         title,
         style: TextStyle(
@@ -319,7 +319,7 @@ class _ThemeSelector extends StatelessWidget {
 
     return Container(
       height: 32,
-      padding: EdgeInsets.all(2),
+      padding: const EdgeInsets.all(2),
       decoration: BoxDecoration(
         color: context.colors.iosSecondaryBg,
         borderRadius: BorderRadius.circular(9),
@@ -335,7 +335,7 @@ class _ThemeSelector extends StatelessWidget {
                 context.read<SettingsProvider>().setThemeMode(mode);
               },
               child: AnimatedContainer(
-                duration: Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 200),
                 curve: Curves.easeInOut,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
@@ -346,7 +346,7 @@ class _ThemeSelector extends StatelessWidget {
                           BoxShadow(
                             color: context.colors.iosBlue.withValues(alpha: 0.3),
                             blurRadius: 4,
-                            offset: Offset(0, 2),
+                            offset: const Offset(0, 2),
                           ),
                         ]
                       : null,
@@ -362,7 +362,7 @@ class _ThemeSelector extends StatelessWidget {
                           ? Colors.white
                           : context.colors.iosSecondaryLabel,
                     ),
-                    SizedBox(width: 4),
+                    const SizedBox(width: 4),
                     Text(
                       label,
                       style: TextStyle(

@@ -43,7 +43,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         backgroundColor: context.colors.iosSurface,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(24, 24, 24, 16),
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -55,7 +55,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   color: context.colors.iosLabel,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 'Delete all scanned history?\nThis cannot be undone.',
                 textAlign: TextAlign.center,
@@ -65,7 +65,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   height: 1.4,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Divider(height: 0.5, thickness: 0.5, color: context.colors.iosSeparator),
               Row(
                 children: [
@@ -144,7 +144,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         actions: [
           if (!_showFavorites && repo.scannedRecords.isNotEmpty)
             IconButton(
-              icon: Icon(Icons.delete_sweep_outlined),
+              icon: const Icon(Icons.delete_sweep_outlined),
               tooltip: AppStrings.deleteAll,
               color: context.colors.iosDestructive,
               onPressed: () {
@@ -158,10 +158,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
         children: [
           // ── iOS Segmented Control ───────────────────────────
           Padding(
-            padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             child: Container(
               height: 32,
-              padding: EdgeInsets.all(2),
+              padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
                 color: context.colors.iosSecondaryBg,
                 borderRadius: BorderRadius.circular(9),
@@ -199,7 +199,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
           // ── iOS Search Bar ────────────────────────────────
           Padding(
-            padding: EdgeInsets.fromLTRB(16, 10, 16, 0),
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
             child: SizedBox(
               height: 36,
               child: TextField(
@@ -229,7 +229,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         )
                       : null,
                   isDense: true,
-                  contentPadding: EdgeInsets.symmetric(vertical: 8),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 8),
                   filled: true,
                   fillColor: context.colors.iosTertiaryLabel.withValues(alpha: 0.15),
                   border: OutlineInputBorder(
@@ -254,7 +254,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           // ── Item count ────────────────────────────────────
           if (records.isNotEmpty)
             Padding(
-              padding: EdgeInsets.fromLTRB(16, 10, 16, 8),
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 8),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -281,7 +281,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 : ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: ListView.separated(
-                      padding: EdgeInsets.fromLTRB(16, 0, 16, 24),
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                       itemCount: records.length,
                       separatorBuilder: (_, i) => Divider(
                         height: 0.5,
@@ -344,7 +344,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       child: GestureDetector(
         onTap: onTap,
         child: AnimatedContainer(
-          duration: Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOut,
           alignment: Alignment.center,
           decoration: BoxDecoration(
@@ -355,7 +355,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     BoxShadow(
                       color: context.colors.iosBlue.withValues(alpha: 0.3),
                       blurRadius: 4,
-                      offset: Offset(0, 2),
+                      offset: const Offset(0, 2),
                     ),
                   ]
                 : null,

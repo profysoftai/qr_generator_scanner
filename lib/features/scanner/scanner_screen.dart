@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:qr_generator_scanner/core/constants/app_colors.dart';
 import 'package:qr_generator_scanner/core/constants/app_strings.dart';
+import 'package:qr_generator_scanner/core/services/ad_service.dart';
 import 'package:qr_generator_scanner/core/services/camera_permission_service.dart';
 import 'package:qr_generator_scanner/core/services/qr_repository.dart';
 import 'package:qr_generator_scanner/core/services/settings_provider.dart';
@@ -98,7 +99,9 @@ class _ScannerScreenState extends State<ScannerScreen>
       facing: CameraFacing.back,
       torchEnabled: false,
     );
-    _cameraRunning = true;
+    // _cameraRunning is NOT set here — the camera has not started yet.
+    // It is set to true only in _resumeScan() and _onDetect() after a
+    // confirmed successful start, so errorBuilder can always reset it.
   }
 
   void _onDetect(BarcodeCapture capture) async {
@@ -108,7 +111,7 @@ class _ScannerScreenState extends State<ScannerScreen>
     if (!QrParser.isValid(rawValue)) {
       if (rawValue != null && rawValue.isNotEmpty && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text(AppStrings.errorInvalidQr),
             duration: Duration(seconds: 2),
           ),
@@ -129,7 +132,7 @@ class _ScannerScreenState extends State<ScannerScreen>
     _cameraRunning = false;
 
     final record = QrRecord(
-      id: Uuid().v4(),
+      id: const Uuid().v4(),
       data: value,
       type: 'scanned',
       label: QrParser.label(contentType),
@@ -152,6 +155,10 @@ class _ScannerScreenState extends State<ScannerScreen>
       record: record,
       onScanAgain: _resumeScan,
     );
+
+    if (!mounted) return;
+    // Trigger interstitial every 3rd scan — called after sheet is fully dismissed.
+    AdService.instance.onScanCompleted();
 
     // Always resume after sheet closes, regardless of how it was dismissed.
     // _resumeScan guards against double-start if button was already tapped.
@@ -195,7 +202,7 @@ class _ScannerScreenState extends State<ScannerScreen>
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
-        title: Text(
+        title: const Text(
           'Scan QR Code',
           style: TextStyle(
             color: Colors.white,
@@ -206,7 +213,7 @@ class _ScannerScreenState extends State<ScannerScreen>
         ),
         actions: [
           Padding(
-            padding: EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.only(right: 8),
             child: GestureDetector(
               onTap: () {
                 HapticFeedback.lightImpact();
@@ -214,7 +221,7 @@ class _ScannerScreenState extends State<ScannerScreen>
                 setState(() => _torchOn = !_torchOn);
               },
               child: AnimatedSwitcher(
-                duration: Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 200),
                 transitionBuilder: (child, animation) =>
                     ScaleTransition(scale: animation, child: child),
                 child: Container(
@@ -277,7 +284,7 @@ class _ScannerScreenState extends State<ScannerScreen>
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
                   child: Container(
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: 12,
                       vertical: 8,
                     ),
@@ -285,7 +292,7 @@ class _ScannerScreenState extends State<ScannerScreen>
                       color: Colors.black.withValues(alpha: 0.6),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Position QR code in frame',
                       style: TextStyle(
                         color: Colors.white,
@@ -326,7 +333,7 @@ class _PermissionGate extends StatelessWidget {
       backgroundColor: context.colors.iosGroupedBg,
       body: Center(
         child: Padding(
-          padding: EdgeInsets.all(32),
+          padding: const EdgeInsets.all(32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -344,7 +351,7 @@ class _PermissionGate extends StatelessWidget {
                   color: context.colors.iosBlue,
                 ),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               Text(
                 'Camera Access\nNeeded',
                 textAlign: TextAlign.center,
@@ -356,7 +363,7 @@ class _PermissionGate extends StatelessWidget {
                   height: 1.15,
                 ),
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Text(
                 isPermanent
                     ? AppStrings.cameraPermissionDenied
@@ -368,7 +375,7 @@ class _PermissionGate extends StatelessWidget {
                   height: 1.4,
                 ),
               ),
-              SizedBox(height: 32),
+              const SizedBox(height: 32),
               // Primary action button
               SizedBox(
                 width: double.infinity,
@@ -394,7 +401,7 @@ class _PermissionGate extends StatelessWidget {
                     isPermanent
                         ? AppStrings.openSettings
                         : 'Allow Camera Access',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w600,
                     ),
@@ -402,7 +409,7 @@ class _PermissionGate extends StatelessWidget {
                 ),
               ),
               if (isPermanent) ...[
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 TextButton(
                   onPressed: () {
                     HapticFeedback.lightImpact();
@@ -437,7 +444,7 @@ class _CameraError extends StatelessWidget {
       color: Colors.black,
       child: Center(
         child: Padding(
-          padding: EdgeInsets.all(32),
+          padding: const EdgeInsets.all(32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -454,8 +461,8 @@ class _CameraError extends StatelessWidget {
                   size: 40,
                 ),
               ),
-              SizedBox(height: 20),
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 'Camera Error',
                 style: TextStyle(
                   color: Colors.white,
@@ -464,7 +471,7 @@ class _CameraError extends StatelessWidget {
                   letterSpacing: -0.4,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 AppStrings.errorGeneric,
                 style: TextStyle(
@@ -473,7 +480,7 @@ class _CameraError extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 28),
+              const SizedBox(height: 28),
               SizedBox(
                 width: double.infinity,
                 height: 50,
@@ -490,7 +497,7 @@ class _CameraError extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: Text(
+                  child: const Text(
                     'Retry',
                     style: TextStyle(
                       fontSize: 17,
@@ -517,7 +524,7 @@ class _ScanOverlay extends StatelessWidget {
     return IgnorePointer(
       child: CustomPaint(
         painter: _OverlayPainter(),
-        child: SizedBox.expand(),
+        child: const SizedBox.expand(),
       ),
     );
   }
@@ -541,7 +548,7 @@ class _OverlayPainter extends CustomPainter {
     // Dim background — black 60% alpha
     final dimPaint = Paint()..color = Colors.black.withValues(alpha: 0.6);
     final cutout = RRect.fromLTRBR(
-        left, top, right, bottom, Radius.circular(radius));
+        left, top, right, bottom, const Radius.circular(radius));
     final fullRect = Rect.fromLTWH(0, 0, size.width, size.height);
     final path = Path()
       ..addRect(fullRect)

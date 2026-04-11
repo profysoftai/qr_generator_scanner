@@ -17,7 +17,7 @@ class QrView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final qr = Container(
-      padding: EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12), // Strict iOS 12px grouped border
@@ -31,11 +31,11 @@ class QrView extends StatelessWidget {
         version: QrVersions.auto,
         size: size,
         backgroundColor: Colors.transparent,
-        eyeStyle: QrEyeStyle(
+        eyeStyle: const QrEyeStyle(
           eyeShape: QrEyeShape.square,
           color: Colors.black,
         ),
-        dataModuleStyle: QrDataModuleStyle(
+        dataModuleStyle: const QrDataModuleStyle(
           dataModuleShape: QrDataModuleShape.square,
           color: Colors.black,
         ),

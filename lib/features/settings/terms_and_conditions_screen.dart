@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_generator_scanner/core/constants/app_colors.dart';
 
-class TermsOfUseScreen extends StatelessWidget {
-  const TermsOfUseScreen({super.key});
+class TermsAndConditionsScreen extends StatelessWidget {
+  const TermsAndConditionsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class TermsOfUseScreen extends StatelessWidget {
             Navigator.pop(context);
           },
           child: Padding(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             child: Icon(
               Icons.arrow_back_ios_new,
               size: 20,
@@ -41,20 +41,20 @@ class TermsOfUseScreen extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(16, 12, 16, 48),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 48),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Effective date badge ──────────────────────
             Center(
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                 decoration: BoxDecoration(
                   color: colors.iosBlue.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  'Effective Date: 2025-01-01',
+                  'Effective Date: 2026-04-11',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
@@ -64,18 +64,18 @@ class TermsOfUseScreen extends StatelessWidget {
               ),
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-            _TermsSection(
+            const _TermsSection(
               number: '1',
               title: 'General Overview',
               paragraphs: [
-                'These terms and conditions apply to the QR Generator & Scanner app (hereby referred to as "Application") for mobile devices that was created by GAMENCY TECH PRIVATE LIMITED (hereby referred to as "Service Provider") as a free service.',
+                'These terms and conditions apply to the QR TOOLKIT PRO app (hereby referred to as "Application") for mobile devices that was created by GAMENCY TECH PRIVATE LIMITED (hereby referred to as "Service Provider") as an Ad Supported service.',
                 'Upon downloading or utilizing the Application, you are automatically agreeing to the following terms. It is strongly advised that you thoroughly read and understand these terms prior to using the Application.',
               ],
             ),
 
-            _TermsSection(
+            const _TermsSection(
               number: '2',
               title: 'Intellectual Property',
               paragraphs: [
@@ -83,7 +83,7 @@ class TermsOfUseScreen extends StatelessWidget {
               ],
             ),
 
-            _TermsSection(
+            const _TermsSection(
               number: '3',
               title: 'Modifications to Service',
               paragraphs: [
@@ -91,7 +91,7 @@ class TermsOfUseScreen extends StatelessWidget {
               ],
             ),
 
-            _TermsSection(
+            const _TermsSection(
               number: '4',
               title: 'Data & Security',
               paragraphs: [
@@ -99,18 +99,21 @@ class TermsOfUseScreen extends StatelessWidget {
               ],
             ),
 
-            _TermsSection(
+            const _TermsSection(
               number: '5',
               title: 'Third-Party Services',
               paragraphs: [
-                'Please note that the Application utilizes third-party services that have their own Terms and Conditions. Below are the third-party service providers used by the Application:',
+                'Please note that the Application utilizes third-party services that have their own Terms and Conditions. Below are the links to the Terms and Conditions of the third-party service providers used by the Application:',
               ],
               bulletPoints: [
-                'Google Play Services (Android platform)',
+                'Google Play Services',
+                'AdMob',
+                'Google Analytics for Firebase',
+                'Firebase Crashlytics',
               ],
             ),
 
-            _TermsSection(
+            const _TermsSection(
               number: '6',
               title: 'Limitations of Responsibility',
               paragraphs: [
@@ -120,7 +123,7 @@ class TermsOfUseScreen extends StatelessWidget {
               ],
             ),
 
-            _TermsSection(
+            const _TermsSection(
               number: '7',
               title: 'Liability & Accuracy',
               paragraphs: [
@@ -128,7 +131,7 @@ class TermsOfUseScreen extends StatelessWidget {
               ],
             ),
 
-            _TermsSection(
+            const _TermsSection(
               number: '8',
               title: 'Updates & Termination',
               paragraphs: [
@@ -136,20 +139,19 @@ class TermsOfUseScreen extends StatelessWidget {
               ],
             ),
 
-            _TermsSection(
+            const _TermsSection(
               number: '9',
               title: 'Changes to Terms',
               paragraphs: [
-                'Changes to These Terms and Conditions',
                 'The Service Provider may periodically update their Terms and Conditions. Therefore, you are advised to review this page regularly for any changes. The Service Provider will notify you of any changes by posting the new Terms and Conditions on this page.',
               ],
             ),
 
-            _TermsSection(
+            const _TermsSection(
               number: '10',
               title: 'Contact Us',
               paragraphs: [
-                'If you have any questions or suggestions about the Terms and Conditions, please do not hesitate to contact the Service Provider at gamencysupport@protonmail.com.',
+                'If you have any questions or suggestions about the Terms and Conditions, please do not hesitate to contact the Service Provider at contact@gamencytech.com.',
               ],
               isLast: true,
             ),
@@ -157,9 +159,9 @@ class TermsOfUseScreen extends StatelessWidget {
             // ── Footer ─────────────────────────────────
             Center(
               child: Padding(
-                padding: EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.only(bottom: 8),
                 child: Text(
-                  '© 2025 GAMENCY TECH PRIVATE LIMITED. All rights reserved.',
+                  '© 2026 GAMENCY TECH PRIVATE LIMITED. All rights reserved.',
                   style: TextStyle(
                     fontSize: 13,
                     color: colors.iosTertiaryLabel,
@@ -200,7 +202,6 @@ class _TermsSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section heading
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -222,7 +223,7 @@ class _TermsSection extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   title,
@@ -237,11 +238,10 @@ class _TermsSection extends StatelessWidget {
             ],
           ),
 
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
 
-          // Paragraphs
           ...paragraphs.map((p) => Padding(
-                padding: EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.only(bottom: 10),
                 child: Text(
                   p,
                   style: TextStyle(
@@ -252,12 +252,11 @@ class _TermsSection extends StatelessWidget {
                 ),
               )),
 
-          // Bullet points (if any)
           if (bulletPoints != null)
             Container(
               width: double.infinity,
-              margin: EdgeInsets.only(bottom: 10),
-              padding: EdgeInsets.all(14),
+              margin: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 color: colors.iosSurface,
                 borderRadius: BorderRadius.circular(10),
@@ -270,12 +269,13 @@ class _TermsSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: bulletPoints!
                     .map((bp) => Padding(
-                          padding: EdgeInsets.only(bottom: bulletPoints!.last == bp ? 0 : 10),
+                          padding: EdgeInsets.only(
+                              bottom: bulletPoints!.last == bp ? 0 : 10),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(top: 6),
+                                padding: const EdgeInsets.only(top: 6),
                                 child: Container(
                                   width: 6,
                                   height: 6,
@@ -285,7 +285,7 @@ class _TermsSection extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 10),
+                              const SizedBox(width: 10),
                               Expanded(
                                 child: Text(
                                   bp,

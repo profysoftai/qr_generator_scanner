@@ -15,7 +15,7 @@ class EmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(32),
+        padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -33,7 +33,7 @@ class EmptyState extends StatelessWidget {
                 color: context.colors.iosSecondaryLabel,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             // Title
             Text(
               message,

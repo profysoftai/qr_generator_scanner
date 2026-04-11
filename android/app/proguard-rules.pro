@@ -68,3 +68,9 @@
 # path_provider
 -keep class io.flutter.plugins.pathprovider.** { *; }
 -dontwarn io.flutter.plugins.pathprovider.**
+
+# google_mobile_ads
+-keep class com.google.android.gms.ads.** { *; }
+-keep class com.google.ads.** { *; }
+-dontwarn com.google.android.gms.ads.**
+-dontwarn com.google.ads.**

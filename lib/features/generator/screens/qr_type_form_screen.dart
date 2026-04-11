@@ -53,14 +53,20 @@ class _QrTypeFormScreenState extends State<QrTypeFormScreen> {
       case QrType.appDownload:
         return ['url'];
       case QrType.upi:
-        return ['upiId', 'name', 'amount', 'note'];
+        return ['upiHandle', 'upiProvider', 'name', 'amount', 'note'];
     }
   }
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
     HapticFeedback.mediumImpact();
-    final fields = _controllers.map((k, v) => MapEntry(k, v.text.trim()));
+    var fields = _controllers.map((k, v) => MapEntry(k, v.text.trim()));
+    // Combine upiHandle + upiProvider into upiId for QrFormatService
+    if (widget.typeData.type == QrType.upi) {
+      final handle = fields['upiHandle'] ?? '';
+      final provider = fields['upiProvider'] ?? '';
+      fields = Map.from(fields)..[('upiId')] = '$handle@$provider';
+    }
     final qrData = QrFormatService.build(widget.typeData.type, fields);
     if (qrData.isEmpty) return;
     Navigator.push(
@@ -401,13 +407,7 @@ class _QrTypeFormScreenState extends State<QrTypeFormScreen> {
 
       case QrType.upi:
         return _card([
-          _field(
-            key: 'upiId',
-            label: 'UPI ID',
-            hint: 'name@upi',
-            keyboardType: TextInputType.emailAddress,
-            validator: _validateUpi,
-          ),
+          _upiIdField(),
           _divider(),
           _field(
             key: 'name',
@@ -454,6 +454,169 @@ class _QrTypeFormScreenState extends State<QrTypeFormScreen> {
         color: context.colors.iosSeparator,
       );
 
+  // ── UPI ID split field (handle @ provider) ───────────────────────────────
+  Widget _upiIdField() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'UPI ID',
+            style: TextStyle(
+              fontSize: 15,
+              color: context.colors.iosSecondaryLabel,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Handle (before @)
+              Expanded(
+                child: TextFormField(
+                  controller: _controllers['upiHandle'],
+                  keyboardType: TextInputType.text,
+                  style: TextStyle(fontSize: 16, color: context.colors.iosLabel),
+                  decoration: InputDecoration(
+                    hintText: 'abcd',
+                    hintStyle: TextStyle(
+                      fontSize: 15,
+                      color: context.colors.iosTertiaryLabel,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                        color: context.colors.iosSeparator,
+                        width: 0.5,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                        color: context.colors.iosSeparator,
+                        width: 0.5,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                        color: context.colors.iosBlue,
+                        width: 1.5,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                        color: context.colors.iosDestructive,
+                        width: 1,
+                      ),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                        color: context.colors.iosDestructive,
+                        width: 1.5,
+                      ),
+                    ),
+                    filled: true,
+                    fillColor: context.colors.iosSecondaryBg,
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 14),
+                    errorStyle: TextStyle(
+                      fontSize: 12,
+                      color: context.colors.iosDestructive,
+                    ),
+                  ),
+                  validator: (v) {
+                    if (v == null || v.trim().isEmpty) return 'Required';
+                    if (v.trim().contains('@')) return 'No @ needed';
+                    return null;
+                  },
+                ),
+              ),
+              // Fixed @ symbol
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
+                child: Text(
+                  '@',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: context.colors.iosBlue,
+                  ),
+                ),
+              ),
+              // Provider (after @)
+              Expanded(
+                child: TextFormField(
+                  controller: _controllers['upiProvider'],
+                  keyboardType: TextInputType.text,
+                  style: TextStyle(fontSize: 16, color: context.colors.iosLabel),
+                  decoration: InputDecoration(
+                    hintText: 'ybl',
+                    hintStyle: TextStyle(
+                      fontSize: 15,
+                      color: context.colors.iosTertiaryLabel,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                        color: context.colors.iosSeparator,
+                        width: 0.5,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                        color: context.colors.iosSeparator,
+                        width: 0.5,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                        color: context.colors.iosBlue,
+                        width: 1.5,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                        color: context.colors.iosDestructive,
+                        width: 1,
+                      ),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                        color: context.colors.iosDestructive,
+                        width: 1.5,
+                      ),
+                    ),
+                    filled: true,
+                    fillColor: context.colors.iosSecondaryBg,
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 14),
+                    errorStyle: TextStyle(
+                      fontSize: 12,
+                      color: context.colors.iosDestructive,
+                    ),
+                  ),
+                  validator: (v) {
+                    if (v == null || v.trim().isEmpty) return 'Required';
+                    if (v.trim().contains('@')) return 'No @ needed';
+                    return null;
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _field({
     required String key,
     required String label,
@@ -463,22 +626,22 @@ class _QrTypeFormScreenState extends State<QrTypeFormScreen> {
     String? Function(String?)? validator,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: TextFormField(
         controller: _controllers[key],
         keyboardType: keyboardType,
         maxLines: maxLines,
         validator: validator,
-        style: TextStyle(fontSize: 15, color: context.colors.iosLabel),
+        style: TextStyle(fontSize: 16, color: context.colors.iosLabel),
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(
-            fontSize: 13,
+            fontSize: 15,
             color: context.colors.iosSecondaryLabel,
           ),
           hintText: hint,
           hintStyle: TextStyle(
-            fontSize: 14,
+            fontSize: 15,
             color: context.colors.iosTertiaryLabel,
           ),
           border: InputBorder.none,
@@ -486,9 +649,9 @@ class _QrTypeFormScreenState extends State<QrTypeFormScreen> {
           focusedBorder: InputBorder.none,
           errorBorder: InputBorder.none,
           focusedErrorBorder: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 12),
+          contentPadding: const EdgeInsets.symmetric(vertical: 14),
           errorStyle: TextStyle(
-            fontSize: 11,
+            fontSize: 12,
             color: context.colors.iosDestructive,
           ),
         ),
@@ -539,12 +702,6 @@ class _QrTypeFormScreenState extends State<QrTypeFormScreen> {
     if (v == null || v.trim().isEmpty) return 'Longitude is required.';
     final d = double.tryParse(v.trim());
     if (d == null || d < -180 || d > 180) return 'Enter a valid longitude (-180 to 180).';
-    return null;
-  }
-
-  String? _validateUpi(String? v) {
-    if (v == null || v.trim().isEmpty) return 'UPI ID is required.';
-    if (!v.trim().contains('@')) return 'Enter a valid UPI ID (e.g. name@upi).';
     return null;
   }
 

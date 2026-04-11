@@ -94,7 +94,7 @@ class FaqHelpScreen extends StatelessWidget {
             Navigator.pop(context);
           },
           child: Padding(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             child: Icon(
               Icons.arrow_back_ios_new,
               size: 20,
@@ -113,9 +113,9 @@ class FaqHelpScreen extends StatelessWidget {
         ),
       ),
       body: ListView.separated(
-        padding: EdgeInsets.fromLTRB(16, 12, 16, 40),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
         itemCount: _faqs.length,
-        separatorBuilder: (_, _) => SizedBox(height: 10),
+        separatorBuilder: (_, _) => const SizedBox(height: 10),
         itemBuilder: (_, i) {
           final (question, answer, icon) = _faqs[i];
           return _FaqCard(question: question, answer: answer, icon: icon);
@@ -152,9 +152,9 @@ class _FaqCardState extends State<_FaqCard> {
         setState(() => _expanded = !_expanded);
       },
       child: AnimatedContainer(
-        duration: Duration(milliseconds: 250),
+        duration: const Duration(milliseconds: 250),
         curve: Curves.easeInOut,
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: colors.iosSurface,
           borderRadius: BorderRadius.circular(12),
@@ -183,7 +183,7 @@ class _FaqCardState extends State<_FaqCard> {
                     color: colors.iosBlue,
                   ),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     widget.question,
@@ -196,7 +196,7 @@ class _FaqCardState extends State<_FaqCard> {
                 ),
                 AnimatedRotation(
                   turns: _expanded ? 0.25 : 0,
-                  duration: Duration(milliseconds: 200),
+                  duration: const Duration(milliseconds: 200),
                   child: Icon(
                     Icons.arrow_forward_ios,
                     size: 14,
@@ -206,9 +206,9 @@ class _FaqCardState extends State<_FaqCard> {
               ],
             ),
             AnimatedCrossFade(
-              firstChild: SizedBox.shrink(),
+              firstChild: const SizedBox.shrink(),
               secondChild: Padding(
-                padding: EdgeInsets.only(top: 12, left: 48),
+                padding: const EdgeInsets.only(top: 12, left: 48),
                 child: Text(
                   widget.answer,
                   style: TextStyle(
@@ -220,7 +220,7 @@ class _FaqCardState extends State<_FaqCard> {
               ),
               crossFadeState:
                   _expanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-              duration: Duration(milliseconds: 250),
+              duration: const Duration(milliseconds: 250),
             ),
           ],
         ),

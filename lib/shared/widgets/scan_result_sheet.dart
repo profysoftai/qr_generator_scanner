@@ -27,7 +27,7 @@ class ScanResultSheet extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: context.colors.iosGroupedBg,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) =>
@@ -36,22 +36,114 @@ class ScanResultSheet extends StatelessWidget {
   }
 
   Future<void> _openUrl(BuildContext context) async {
-    final connectivity = context.read<ConnectivityService>();
-    final online = await connectivity.isOnline();
-
-    if (!context.mounted) return;
-
-    if (!online) {
+    final uri = Uri.tryParse(record.data);
+    if (uri == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppStrings.errorOffline)),
+        const SnackBar(content: Text(AppStrings.errorInvalidQr)),
       );
       return;
     }
 
-    final uri = Uri.tryParse(record.data);
-    if (uri == null) {
+    // ── Security: only allow https:// and http:// schemes ──────────────────
+    // Blocks javascript:, file:///, intent://, data: and all other schemes
+    // that canLaunchUrl() may return true for on Android.
+    if (uri.scheme != 'https' && uri.scheme != 'http') {
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppStrings.errorInvalidQr)),
+        const SnackBar(content: Text(AppStrings.errorInvalidQr)),
+      );
+      return;
+    }
+
+    // ── Security: warn user before opening cleartext HTTP links ────────────
+    if (uri.scheme == 'http') {
+      if (!context.mounted) return;
+      final proceed = await showDialog<bool>(
+        context: context,
+        builder: (_) => Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          backgroundColor: context.colors.iosSurface,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.warning_amber_rounded,
+                    size: 40, color: context.colors.iosWarning),
+                const SizedBox(height: 12),
+                Text(
+                  'Insecure Link',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                    color: context.colors.iosLabel,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'This link uses an unencrypted HTTP connection. Your data may be visible to others. Open anyway?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: context.colors.iosSecondaryLabel,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Divider(
+                    height: 0.5,
+                    thickness: 0.5,
+                    color: context.colors.iosSeparator),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                            fontSize: 17,
+                            color: context.colors.iosBlue,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                        width: 0.5,
+                        height: 44,
+                        color: context.colors.iosSeparator),
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: Text(
+                          'Open',
+                          style: TextStyle(
+                            fontSize: 17,
+                            color: context.colors.iosWarning,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      if (proceed != true || !context.mounted) return;
+    }
+
+    // ── Connectivity check ─────────────────────────────────────────────────
+    final connectivity = context.read<ConnectivityService>();
+    final online = await connectivity.isOnline();
+    if (!context.mounted) return;
+
+    if (!online) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(AppStrings.errorOffline)),
       );
       return;
     }
@@ -61,7 +153,7 @@ class ScanResultSheet extends StatelessWidget {
 
     if (!canLaunch) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppStrings.errorGeneric)),
+        const SnackBar(content: Text(AppStrings.errorGeneric)),
       );
       return;
     }
@@ -73,7 +165,7 @@ class ScanResultSheet extends StatelessWidget {
     } catch (_) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppStrings.errorGeneric)),
+        const SnackBar(content: Text(AppStrings.errorGeneric)),
       );
     }
   }
@@ -95,15 +187,15 @@ class ScanResultSheet extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: context.colors.iosBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Row(
                   children: [
-                    Text(typeIcon, style: TextStyle(fontSize: 14)),
-                    SizedBox(width: 6),
+                    Text(typeIcon, style: const TextStyle(fontSize: 14)),
+                    const SizedBox(width: 6),
                     Text(
                       typeLabel,
                       style: TextStyle(
@@ -115,7 +207,7 @@ class ScanResultSheet extends StatelessWidget {
                   ],
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               Container(
                 width: 32,
                 height: 32,
@@ -134,7 +226,7 @@ class ScanResultSheet extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             'Scan Result',
             style: TextStyle(
@@ -144,10 +236,10 @@ class ScanResultSheet extends StatelessWidget {
               letterSpacing: -0.4,
             ),
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: context.colors.iosSurface,
               borderRadius: BorderRadius.circular(12),
@@ -161,7 +253,7 @@ class ScanResultSheet extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           Row(
             children: [
               Expanded(
@@ -174,11 +266,11 @@ class ScanResultSheet extends StatelessWidget {
                       if (!context.mounted) return;
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Copied to clipboard')),
+                        const SnackBar(content: Text('Copied to clipboard')),
                       );
                     },
-                    icon: Icon(Icons.copy_rounded, size: 18),
-                    label: Text('Copy'),
+                    icon: const Icon(Icons.copy_rounded, size: 18),
+                    label: const Text('Copy'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: context.colors.iosBlue,
                       side: BorderSide(color: context.colors.iosBlue, width: 1),
@@ -188,7 +280,7 @@ class ScanResultSheet extends StatelessWidget {
                 ),
               ),
               if (isUrl) ...[
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: SizedBox(
                     height: 50,
@@ -197,8 +289,8 @@ class ScanResultSheet extends StatelessWidget {
                         HapticFeedback.lightImpact();
                         _openUrl(context);
                       },
-                      icon: Icon(Icons.open_in_browser, size: 18),
-                      label: Text('Open'),
+                      icon: const Icon(Icons.open_in_browser, size: 18),
+                      label: const Text('Open'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: context.colors.iosBlue,
                         foregroundColor: Colors.white,
@@ -211,7 +303,7 @@ class ScanResultSheet extends StatelessWidget {
               ],
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
             height: 50,
@@ -221,8 +313,8 @@ class ScanResultSheet extends StatelessWidget {
                 Navigator.pop(context);
                 onScanAgain();
               },
-              icon: Icon(Icons.qr_code_scanner, size: 18),
-              label: Text(
+              icon: const Icon(Icons.qr_code_scanner, size: 18),
+              label: const Text(
                 'Scan Again',
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
               ),

@@ -21,13 +21,89 @@ class QrListTile extends StatelessWidget {
     required this.onFavoriteToggle,
   });
 
+  Future<void> _confirmDelete(BuildContext context) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (_) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        backgroundColor: context.colors.iosSurface,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Delete Item',
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                  color: context.colors.iosLabel,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'This item will be permanently deleted.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: context.colors.iosSecondaryLabel,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Divider(height: 0.5, thickness: 0.5, color: context.colors.iosSeparator),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.pop(context, false);
+                      },
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: context.colors.iosBlue,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(width: 0.5, height: 44, color: context.colors.iosSeparator),
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.pop(context, true);
+                      },
+                      child: Text(
+                        'Delete',
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: context.colors.iosDestructive,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (confirm == true) onDelete();
+  }
+
   void _showDetail(BuildContext context) {
     HapticFeedback.lightImpact();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: context.colors.iosGroupedBg,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) => _QrDetailSheet(
@@ -56,7 +132,7 @@ class QrListTile extends StatelessWidget {
         child: Center(
           child: Text(
             QrParser.icon(type),
-            style: TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 16),
           ),
         ),
       ),
@@ -97,7 +173,7 @@ class QrListTile extends StatelessWidget {
             ),
             onPressed: () {
               HapticFeedback.lightImpact();
-              onDelete();
+              _confirmDelete(context);
             },
           ),
         ],
@@ -125,6 +201,82 @@ class _QrDetailSheetState extends State<_QrDetailSheet> with GallerySaveMixin {
   final _repaintKey = GlobalKey();
   bool _isSaving = false;
 
+  Future<void> _confirmDelete(BuildContext context) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (_) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        backgroundColor: context.colors.iosSurface,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Delete Item',
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                  color: context.colors.iosLabel,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'This item will be permanently deleted.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: context.colors.iosSecondaryLabel,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Divider(height: 0.5, thickness: 0.5, color: context.colors.iosSeparator),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.pop(context, false);
+                      },
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: context.colors.iosBlue,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(width: 0.5, height: 44, color: context.colors.iosSeparator),
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.pop(context, true);
+                      },
+                      child: Text(
+                        'Delete',
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: context.colors.iosDestructive,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (confirm == true) widget.onDelete();
+  }
+
   Future<void> _share() async {
     final ok = await QrShareService.share(
       _repaintKey,
@@ -133,7 +285,7 @@ class _QrDetailSheetState extends State<_QrDetailSheet> with GallerySaveMixin {
     if (!mounted) return;
     if (!ok) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppStrings.errorShare)),
+        const SnackBar(content: Text(AppStrings.errorShare)),
       );
     }
   }
@@ -160,7 +312,7 @@ class _QrDetailSheetState extends State<_QrDetailSheet> with GallerySaveMixin {
           Row(
             children: [
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: context.colors.iosBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
@@ -169,9 +321,9 @@ class _QrDetailSheetState extends State<_QrDetailSheet> with GallerySaveMixin {
                   children: [
                     Text(
                       QrParser.icon(type),
-                      style: TextStyle(fontSize: 14),
+                      style: const TextStyle(fontSize: 14),
                     ),
-                    SizedBox(width: 6),
+                    const SizedBox(width: 6),
                     Text(
                       QrParser.label(type),
                       style: TextStyle(
@@ -183,7 +335,7 @@ class _QrDetailSheetState extends State<_QrDetailSheet> with GallerySaveMixin {
                   ],
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               IconButton(
                 icon: Icon(
                   widget.record.isFavorite ? Icons.star : Icons.star_border,
@@ -213,11 +365,11 @@ class _QrDetailSheetState extends State<_QrDetailSheet> with GallerySaveMixin {
               ),
             ],
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           
           // QR image
           Container(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: context.colors.iosSurface,
               borderRadius: BorderRadius.circular(12),
@@ -232,12 +384,12 @@ class _QrDetailSheetState extends State<_QrDetailSheet> with GallerySaveMixin {
               repaintKey: _repaintKey,
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           
           // Data preview
           Container(
             width: double.infinity,
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: context.colors.iosSurface,
               borderRadius: BorderRadius.circular(12),
@@ -253,7 +405,7 @@ class _QrDetailSheetState extends State<_QrDetailSheet> with GallerySaveMixin {
                     color: context.colors.iosLabel,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   AppUtils.timeAgo(widget.record.createdAt),
                   style: TextStyle(
@@ -264,7 +416,7 @@ class _QrDetailSheetState extends State<_QrDetailSheet> with GallerySaveMixin {
               ],
             ),
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           
           // Row 1: Copy | Delete
           Row(
@@ -279,11 +431,11 @@ class _QrDetailSheetState extends State<_QrDetailSheet> with GallerySaveMixin {
                       if (!context.mounted) return;
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Copied to clipboard')),
+                        const SnackBar(content: Text('Copied to clipboard')),
                       );
                     },
-                    icon: Icon(Icons.copy_rounded, size: 18),
-                    label: Text('Copy'),
+                    icon: const Icon(Icons.copy_rounded, size: 18),
+                    label: const Text('Copy'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: context.colors.iosBlue,
                       side: BorderSide(color: context.colors.iosBlue, width: 1),
@@ -292,17 +444,17 @@ class _QrDetailSheetState extends State<_QrDetailSheet> with GallerySaveMixin {
                   ),
                 ),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: SizedBox(
                   height: 44,
                   child: OutlinedButton.icon(
                     onPressed: () {
                       HapticFeedback.lightImpact();
-                      widget.onDelete();
+                      _confirmDelete(context);
                     },
-                    icon: Icon(Icons.delete_outline, size: 18),
-                    label: Text('Delete'),
+                    icon: const Icon(Icons.delete_outline, size: 18),
+                    label: const Text('Delete'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: context.colors.iosDestructive,
                       side: BorderSide(color: context.colors.iosDestructive, width: 1),
@@ -313,7 +465,7 @@ class _QrDetailSheetState extends State<_QrDetailSheet> with GallerySaveMixin {
               ),
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           
           // Row 2: Share | Gallery
           Row(
@@ -326,8 +478,8 @@ class _QrDetailSheetState extends State<_QrDetailSheet> with GallerySaveMixin {
                       HapticFeedback.lightImpact();
                       _share();
                     },
-                    icon: Icon(Icons.share_outlined, size: 18),
-                    label: Text(AppStrings.shareQr),
+                    icon: const Icon(Icons.share_outlined, size: 18),
+                    label: const Text(AppStrings.shareQr),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: context.colors.iosBlue,
                       side: BorderSide(color: context.colors.iosBlue, width: 1),
@@ -336,7 +488,7 @@ class _QrDetailSheetState extends State<_QrDetailSheet> with GallerySaveMixin {
                   ),
                 ),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: SizedBox(
                   height: 44,
@@ -351,8 +503,8 @@ class _QrDetailSheetState extends State<_QrDetailSheet> with GallerySaveMixin {
                             height: 18,
                             child: CircularProgressIndicator(strokeWidth: 2, color: context.colors.iosBlue),
                           )
-                        : Icon(Icons.download_rounded, size: 18),
-                    label: Text(AppStrings.saveToGallery),
+                        : const Icon(Icons.download_rounded, size: 18),
+                    label: const Text(AppStrings.saveToGallery),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: context.colors.iosBlue,
                       side: BorderSide(color: context.colors.iosBlue, width: 1),

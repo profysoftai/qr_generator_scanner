@@ -34,7 +34,7 @@ class MyQrScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             color: context.colors.iosBlue,
             onPressed: () {
               if (onCreateQr != null) {
@@ -50,11 +50,11 @@ class MyQrScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  EmptyState(
+                  const EmptyState(
                     message: 'No QR Codes Yet',
                     icon: Icons.qr_code_2,
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     'Your generated QR codes will appear here',
                     style: TextStyle(
@@ -62,9 +62,9 @@ class MyQrScreen extends StatelessWidget {
                       color: context.colors.iosSecondaryLabel,
                     ),
                   ),
-                  SizedBox(height: 32),
+                  const SizedBox(height: 32),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
                     child: SizedBox(
                       width: double.infinity,
                       height: 50,
@@ -83,7 +83,7 @@ class MyQrScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Create QR Code',
                           style: TextStyle(
                             fontSize: 17,
@@ -100,7 +100,7 @@ class MyQrScreen extends StatelessWidget {
               children: [
                 // ── Section header ────────────────────────────────────────────
                 Padding(
-                  padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -120,7 +120,7 @@ class MyQrScreen extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: ListView.separated(
-                      padding: EdgeInsets.fromLTRB(16, 0, 16, 24),
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                       itemCount: records.length,
                       separatorBuilder: (_, i) => Divider(
                         height: 0.5,

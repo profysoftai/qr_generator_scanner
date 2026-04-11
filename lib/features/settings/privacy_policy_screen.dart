@@ -22,7 +22,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
             Navigator.pop(context);
           },
           child: Padding(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             child: Icon(
               Icons.arrow_back_ios_new,
               size: 20,
@@ -41,20 +41,20 @@ class PrivacyPolicyScreen extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(16, 12, 16, 48),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 48),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Effective date badge ──────────────────────
             Center(
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                 decoration: BoxDecoration(
                   color: colors.iosBlue.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  'Effective Date: 2025-01-01',
+                  'Effective Date: 2026-04-11',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
@@ -64,134 +64,120 @@ class PrivacyPolicyScreen extends StatelessWidget {
               ),
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-            _PrivacySection(
+            const _PrivacySection(
               number: '1',
               title: 'Introduction',
               paragraphs: [
-                'This privacy policy is applicable to the QR Generator & Scanner app (hereinafter referred to as "Application") for mobile devices, which was developed by GAMENCY TECH PRIVATE LIMITED (hereinafter referred to as "Service Provider") as a free service. This service is provided "AS IS".',
+                'This privacy policy applies to the QR TOOLKIT PRO app (hereby referred to as "Application") for mobile devices that was created by GAMENCY TECH PRIVATE LIMITED (hereby referred to as "Service Provider") as an Ad Supported service. This service is intended for use "AS IS".',
               ],
             ),
 
-            _PrivacySection(
+            const _PrivacySection(
               number: '2',
-              title: 'Information Usage',
+              title: 'Information Collection and Use',
               paragraphs: [
-                'What information does the Application obtain and how is it used?',
-                'The Application does not require registration. All QR codes you scan or generate are stored locally on your device only and are never transmitted to any server.',
-              ],
-            ),
-
-            _PrivacySection(
-              number: '3',
-              title: 'Automatic Data Collection',
-              paragraphs: [
-                'What information does the Application collect automatically?',
-                'The Application does not collect any information automatically. No usage data, device identifiers, or analytics are gathered.',
-              ],
-            ),
-
-            _PrivacySection(
-              number: '4',
-              title: 'Location Information',
-              paragraphs: [
-                'Does the Application collect precise real time location information of the device?',
-                'This Application does not gather precise information about the location of your mobile device.',
-              ],
-            ),
-
-            _PrivacySection(
-              number: '5',
-              title: 'Artificial Intelligence',
-              paragraphs: [
-                'Does the Application use Artificial Intelligence (AI) technologies?',
-                'The Application does not use Artificial Intelligence (AI) technologies to process your data or provide features.',
-              ],
-            ),
-
-            _PrivacySection(
-              number: '6',
-              title: 'Third-Party Access',
-              paragraphs: [
-                'Do third parties see and/or have access to information obtained by the Application?',
-                'No. The Application does not share any data with third parties. All data remains on your device.',
-                'The Application uses the following system-level services provided by the device platform:',
+                'The Application collects information when you download and use it. This information may include:',
               ],
               bulletPoints: [
-                'Google Play Services (Android platform)',
+                'Your device\'s Internet Protocol address (e.g. IP address)',
+                'The pages of the Application that you visit, the time and date of your visit, the time spent on those pages',
+                'The time spent on the Application',
+                'The operating system you use on your mobile device',
               ],
               footerParagraphs: [
-                'The Service Provider will not disclose any user information to third parties except as required by law.',
+                'The Application does not use Artificial Intelligence (AI) technologies to process your data or provide features.',
+                'The Service Provider may use the information you provided to contact you from time to time to provide you with important information, required notices and marketing promotions.',
+                'For a better experience, while using the Application, the Service Provider may require you to provide us with certain personally identifiable information, including but not limited to contact@gamencytech.com. The information that the Service Provider request will be retained by them and used as described in this privacy policy.',
+              ],
+            ),
+
+            const _PrivacySection(
+              number: '3',
+              title: 'Location Information',
+              paragraphs: [
+                'The Application does not gather precise information about the location of your mobile device.',
+              ],
+            ),
+
+            const _PrivacySection(
+              number: '4',
+              title: 'Third Party Access',
+              paragraphs: [
+                'Only aggregated, anonymized data is periodically transmitted to external services to aid the Service Provider in improving the Application and their service. The Service Provider may share your information with third parties in the ways that are described in this privacy statement.',
+                'Please note that the Application utilizes third-party services that have their own Privacy Policy about handling data. Below are the third-party service providers used by the Application:',
+              ],
+              bulletPoints: [
+                'Google Play Services',
+                'AdMob',
+                'Google Analytics for Firebase',
+                'Firebase Crashlytics',
+              ],
+              footerParagraphs: [
+                'The Service Provider may disclose User Provided and Automatically Collected Information:',
               ],
               secondaryBulletPoints: [
                 'as required by law, such as to comply with a subpoena, or similar legal process;',
-                'when necessary to protect the rights or safety of users.',
+                'when they believe in good faith that disclosure is necessary to protect their rights, protect your safety or the safety of others, investigate fraud, or respond to a government request;',
+                'with their trusted services providers who work on their behalf, do not have an independent use of the information we disclose to them, and have agreed to adhere to the rules set forth in this privacy statement.',
               ],
             ),
 
-            _PrivacySection(
-              number: '7',
+            const _PrivacySection(
+              number: '5',
               title: 'Opt-Out Rights',
               paragraphs: [
-                'What are my opt-out rights?',
-                'You can halt all collection of information by the Application easily by uninstalling the Application. You may use the standard uninstall processes as may be available as part of your mobile device or via the mobile application marketplace or network.',
+                'You can stop all collection of information by the Application easily by uninstalling it. You may use the standard uninstall processes as may be available as part of your mobile device or via the mobile application marketplace or network.',
               ],
             ),
 
-            _PrivacySection(
-              number: '8',
-              title: 'Data Retention & Management',
+            const _PrivacySection(
+              number: '6',
+              title: 'Data Retention Policy',
               paragraphs: [
-                'What is the data retention policy and how can you manage your information?',
-                'The Service Provider will retain User Provided data for as long as you use the Application. Since all data is stored locally on your device, you can delete it at any time from within the app.',
-                'If you have any questions about data management, please contact us at gamencysupport@protonmail.com.',
+                'The Service Provider will retain User Provided data for as long as you use the Application and for a reasonable time thereafter. If you\'d like them to delete User Provided Data that you have provided via the Application, please contact them at contact@gamencytech.com and they will respond in a reasonable time.',
               ],
             ),
 
-            _PrivacySection(
-              number: '9',
-              title: 'Children\'s Privacy',
+            const _PrivacySection(
+              number: '7',
+              title: 'Children',
               paragraphs: [
-                'How does the Application address children\'s privacy?',
                 'The Service Provider does not use the Application to knowingly solicit data from or market to children under the age of 13.',
-                'The Application does not address anyone under the age of 13. The Service Provider does not knowingly collect personally identifiable information from children under 13 years of age. In the case the Service Provider discover that a child under 13 has provided personal information, the Service Provider will immediately delete this from their servers. If you are a parent or guardian and you are aware that your child has provided us with personal information, please contact the Service Provider (gamencysupport@protonmail.com) so that they will be able to take the necessary actions.',
+                'The Application does not address anyone under the age of 13. The Service Provider does not knowingly collect personally identifiable information from children under 13 years of age. In the case the Service Provider discover that a child under 13 has provided personal information, the Service Provider will immediately delete this from their servers. If you are a parent or guardian and you are aware that your child has provided us with personal information, please contact the Service Provider (contact@gamencytech.com) so that they will be able to take the necessary actions.',
               ],
             ),
 
-            _PrivacySection(
-              number: '10',
+            const _PrivacySection(
+              number: '8',
               title: 'Security',
               paragraphs: [
-                'How is your information kept secure?',
-                'The Service Provider are concerned about safeguarding the confidentiality of your information. The Service Provider provide physical, electronic, and procedural safeguards to protect information we process and maintain. For example, we limit access to this information to authorized employees and contractors who need to know that information in order to operate, develop or improve their Application. Please be aware that, although we endeavor provide reasonable security for information we process and maintain, no security system can prevent all potential security breaches.',
+                'The Service Provider is concerned about safeguarding the confidentiality of your information. The Service Provider provides physical, electronic, and procedural safeguards to protect information the Service Provider processes and maintains.',
               ],
             ),
 
-            _PrivacySection(
-              number: '11',
-              title: 'Changes to Policy',
+            const _PrivacySection(
+              number: '9',
+              title: 'Changes',
               paragraphs: [
-                'How will you be informed of changes to this Privacy Policy?',
                 'This Privacy Policy may be updated from time to time for any reason. The Service Provider will notify you of any changes to the Privacy Policy by updating this page with the new Privacy Policy. You are advised to consult this Privacy Policy regularly for any changes, as continued use is deemed approval of all changes.',
               ],
             ),
 
-            _PrivacySection(
-              number: '12',
-              title: 'Consent',
+            const _PrivacySection(
+              number: '10',
+              title: 'Your Consent',
               paragraphs: [
-                'How do you give your consent?',
-                'By using the Application, you are giving your consent to the Service Provider processing of your information as set forth in this Privacy Policy now and as amended by us. "Processing,” means using cookies on a computer/hand held device or using or touching information in any way, including, but not limited to, collecting, storing, deleting, using, combining and disclosing information.',
+                'By using the Application, you are consenting to the processing of your information as set forth in this Privacy Policy now and as amended by us.',
               ],
             ),
 
-            _PrivacySection(
-              number: '13',
+            const _PrivacySection(
+              number: '11',
               title: 'Contact Us',
               paragraphs: [
-                'How can you contact us?',
-                'If you have any questions regarding privacy while using the Application, or have questions about the practices, please contact the Service Provider via email at gamencysupport@protonmail.com.',
+                'If you have any questions regarding privacy while using the Application, or have questions about the practices, please contact the Service Provider via email at contact@gamencytech.com.',
               ],
               isLast: true,
             ),
@@ -199,9 +185,9 @@ class PrivacyPolicyScreen extends StatelessWidget {
             // ── Footer ─────────────────────────────────
             Center(
               child: Padding(
-                padding: EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.only(bottom: 8),
                 child: Text(
-                  '© 2025 GAMENCY TECH PRIVATE LIMITED. All rights reserved.',
+                  '© 2026 GAMENCY TECH PRIVATE LIMITED. All rights reserved.',
                   style: TextStyle(
                     fontSize: 13,
                     color: colors.iosTertiaryLabel,
@@ -268,7 +254,7 @@ class _PrivacySection extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   title,
@@ -283,11 +269,11 @@ class _PrivacySection extends StatelessWidget {
             ],
           ),
 
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
 
           // Paragraphs
           ...paragraphs.map((p) => Padding(
-                padding: EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.only(bottom: 10),
                 child: Text(
                   p,
                   style: TextStyle(
@@ -302,8 +288,8 @@ class _PrivacySection extends StatelessWidget {
           if (bulletPoints != null)
             Container(
               width: double.infinity,
-              margin: EdgeInsets.only(bottom: 10),
-              padding: EdgeInsets.all(14),
+              margin: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 color: colors.iosSurface,
                 borderRadius: BorderRadius.circular(10),
@@ -316,12 +302,13 @@ class _PrivacySection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: bulletPoints!
                     .map((bp) => Padding(
-                          padding: EdgeInsets.only(bottom: bulletPoints!.last == bp ? 0 : 10),
+                          padding: EdgeInsets.only(
+                              bottom: bulletPoints!.last == bp ? 0 : 10),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(top: 6),
+                                padding: const EdgeInsets.only(top: 6),
                                 child: Container(
                                   width: 6,
                                   height: 6,
@@ -331,7 +318,7 @@ class _PrivacySection extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 10),
+                              const SizedBox(width: 10),
                               Expanded(
                                 child: Text(
                                   bp,
@@ -352,7 +339,7 @@ class _PrivacySection extends StatelessWidget {
           // Footer paragraphs (if any)
           if (footerParagraphs != null)
             ...footerParagraphs!.map((p) => Padding(
-                  padding: EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.only(bottom: 10),
                   child: Text(
                     p,
                     style: TextStyle(
@@ -363,12 +350,12 @@ class _PrivacySection extends StatelessWidget {
                   ),
                 )),
 
-          // Secondary Bullet points (if any)
+          // Secondary bullet points (if any)
           if (secondaryBulletPoints != null)
             Container(
               width: double.infinity,
-              margin: EdgeInsets.only(bottom: 10),
-              padding: EdgeInsets.all(14),
+              margin: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 color: colors.iosSurface,
                 borderRadius: BorderRadius.circular(10),
@@ -381,12 +368,13 @@ class _PrivacySection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: secondaryBulletPoints!
                     .map((bp) => Padding(
-                          padding: EdgeInsets.only(bottom: secondaryBulletPoints!.last == bp ? 0 : 10),
+                          padding: EdgeInsets.only(
+                              bottom: secondaryBulletPoints!.last == bp ? 0 : 10),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(top: 6),
+                                padding: const EdgeInsets.only(top: 6),
                                 child: Container(
                                   width: 6,
                                   height: 6,
@@ -396,7 +384,7 @@ class _PrivacySection extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 10),
+                              const SizedBox(width: 10),
                               Expanded(
                                 child: Text(
                                   bp,
