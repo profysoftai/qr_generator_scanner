@@ -70,7 +70,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
               number: '1',
               title: 'Introduction',
               paragraphs: [
-                'This privacy policy applies to the QR TOOLKIT PRO app (hereby referred to as "Application") for mobile devices that was created by GAMENCY TECH PRIVATE LIMITED (hereby referred to as "Service Provider") as an Ad Supported service. This service is intended for use "AS IS".',
+                'This privacy policy applies to the QR TOOLKIT PRO app (hereby referred to as "Application") for mobile devices that was created by GAMENCY TECH PRIVATE LIMITED (hereby referred to as "Service Provider") as a free service. This service is intended for use "AS IS".',
               ],
             ),
 
@@ -110,9 +110,6 @@ class PrivacyPolicyScreen extends StatelessWidget {
               ],
               bulletPoints: [
                 'Google Play Services',
-                'AdMob',
-                'Google Analytics for Firebase',
-                'Firebase Crashlytics',
               ],
               footerParagraphs: [
                 'The Service Provider may disclose User Provided and Automatically Collected Information:',

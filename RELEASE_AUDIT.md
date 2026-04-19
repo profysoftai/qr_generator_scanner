@@ -3,7 +3,7 @@
 **Package ID:** com.thegreat.qrscanner  
 **Version:** 1.0.0 (Build 1)  
 **AAB:** build/app/outputs/bundle/release/app-release.aab (51.2 MB)  
-**Audit Status:** 🟢 READY TO PUBLISH — Real AdMob IDs integrated  
+**Audit Status:** 🟢 READY TO PUBLISH — Ads disabled for initial submission  
 **Last Updated:** 2026-04-11
 
 ---

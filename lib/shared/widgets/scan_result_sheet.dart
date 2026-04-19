@@ -44,96 +44,13 @@ class ScanResultSheet extends StatelessWidget {
       return;
     }
 
-    // ── Security: only allow https:// and http:// schemes ──────────────────
-    // Blocks javascript:, file:///, intent://, data: and all other schemes
-    // that canLaunchUrl() may return true for on Android.
-    if (uri.scheme != 'https' && uri.scheme != 'http') {
-      if (!context.mounted) return;
+    // Only https:// is allowed — network_security_config.xml blocks all HTTP
+    // at the OS level. Also blocks javascript:, file:///, intent://, data: etc.
+    if (uri.scheme != 'https') {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text(AppStrings.errorInvalidQr)),
       );
       return;
-    }
-
-    // ── Security: warn user before opening cleartext HTTP links ────────────
-    if (uri.scheme == 'http') {
-      if (!context.mounted) return;
-      final proceed = await showDialog<bool>(
-        context: context,
-        builder: (_) => Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-          backgroundColor: context.colors.iosSurface,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.warning_amber_rounded,
-                    size: 40, color: context.colors.iosWarning),
-                const SizedBox(height: 12),
-                Text(
-                  'Insecure Link',
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                    color: context.colors.iosLabel,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'This link uses an unencrypted HTTP connection. Your data may be visible to others. Open anyway?',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: context.colors.iosSecondaryLabel,
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Divider(
-                    height: 0.5,
-                    thickness: 0.5,
-                    color: context.colors.iosSeparator),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextButton(
-                        onPressed: () => Navigator.pop(context, false),
-                        child: Text(
-                          'Cancel',
-                          style: TextStyle(
-                            fontSize: 17,
-                            color: context.colors.iosBlue,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                        width: 0.5,
-                        height: 44,
-                        color: context.colors.iosSeparator),
-                    Expanded(
-                      child: TextButton(
-                        onPressed: () => Navigator.pop(context, true),
-                        child: Text(
-                          'Open',
-                          style: TextStyle(
-                            fontSize: 17,
-                            color: context.colors.iosWarning,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-      if (proceed != true || !context.mounted) return;
     }
 
     // ── Connectivity check ─────────────────────────────────────────────────
@@ -176,6 +93,9 @@ class ScanResultSheet extends StatelessWidget {
     final typeLabel = QrParser.label(type);
     final typeIcon = QrParser.icon(type);
     final isUrl = type == QrContentType.url;
+    final uri = Uri.tryParse(record.data);
+    final isHttps = isUrl && uri != null && uri.scheme == 'https';
+    final isHttp  = isUrl && uri != null && uri.scheme == 'http';
 
     return Padding(
       padding: EdgeInsets.fromLTRB(
@@ -243,7 +163,9 @@ class ScanResultSheet extends StatelessWidget {
             decoration: BoxDecoration(
               color: context.colors.iosSurface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: context.colors.iosSeparator.withValues(alpha: 0.3), width: 0.5),
+              border: Border.all(
+                  color: context.colors.iosSeparator.withValues(alpha: 0.3),
+                  width: 0.5),
             ),
             child: Text(
               record.data,
@@ -274,12 +196,14 @@ class ScanResultSheet extends StatelessWidget {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: context.colors.iosBlue,
                       side: BorderSide(color: context.colors.iosBlue, width: 1),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
                     ),
                   ),
                 ),
               ),
-              if (isUrl) ...[
+              // Open button — only for https:// links
+              if (isHttps) ...[
                 const SizedBox(width: 12),
                 Expanded(
                   child: SizedBox(
@@ -295,7 +219,8 @@ class ScanResultSheet extends StatelessWidget {
                         backgroundColor: context.colors.iosBlue,
                         foregroundColor: Colors.white,
                         elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
                       ),
                     ),
                   ),
@@ -303,6 +228,27 @@ class ScanResultSheet extends StatelessWidget {
               ],
             ],
           ),
+          // HTTP warning — shown instead of Open button for http:// links
+          if (isHttp)
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Row(
+                children: [
+                  Icon(Icons.lock_open_rounded,
+                      size: 15, color: context.colors.iosWarning),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      'This link uses HTTP and cannot be opened securely.',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: context.colors.iosWarning,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,

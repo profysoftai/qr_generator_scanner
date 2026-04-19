@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:qr_generator_scanner/core/services/ad_service.dart';
 import 'package:qr_generator_scanner/core/constants/app_colors.dart';
 import 'package:qr_generator_scanner/core/constants/app_strings.dart';
@@ -39,33 +38,21 @@ class _HomeScreenState extends State<HomeScreen> {
     final repo = context.watch<QrRepository>();
     final recent = repo.recentRecords;
 
-    return ValueListenableBuilder<BannerAd?>(
-      valueListenable: AdService.instance.bannerNotifier,
-      builder: (context, banner, _) {
-        return Scaffold(
-          backgroundColor: context.colors.iosGroupedBg,
-          body: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _Header(onNavigate: widget.onNavigate),
-                const SizedBox(height: 8),
-                _QuickActions(onNavigate: widget.onNavigate),
-                const SizedBox(height: 24),
-                _RecentActivity(recent: recent, onNavigate: widget.onNavigate),
-                const SizedBox(height: 32),
-              ],
-            ),
-          ),
-          // Banner only appears after it finishes loading — no empty space if it fails.
-          bottomNavigationBar: banner != null
-              ? SizedBox(
-                  height: banner.size.height.toDouble(),
-                  child: AdWidget(ad: banner),
-                )
-              : null,
-        );
-      },
+    return Scaffold(
+      backgroundColor: context.colors.iosGroupedBg,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _Header(onNavigate: widget.onNavigate),
+            const SizedBox(height: 8),
+            _QuickActions(onNavigate: widget.onNavigate),
+            const SizedBox(height: 24),
+            _RecentActivity(recent: recent, onNavigate: widget.onNavigate),
+            const SizedBox(height: 32),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -70,7 +70,7 @@ class TermsAndConditionsScreen extends StatelessWidget {
               number: '1',
               title: 'General Overview',
               paragraphs: [
-                'These terms and conditions apply to the QR TOOLKIT PRO app (hereby referred to as "Application") for mobile devices that was created by GAMENCY TECH PRIVATE LIMITED (hereby referred to as "Service Provider") as an Ad Supported service.',
+                'These terms and conditions apply to the QR TOOLKIT PRO app (hereby referred to as "Application") for mobile devices that was created by GAMENCY TECH PRIVATE LIMITED (hereby referred to as "Service Provider") as a free service.',
                 'Upon downloading or utilizing the Application, you are automatically agreeing to the following terms. It is strongly advised that you thoroughly read and understand these terms prior to using the Application.',
               ],
             ),
@@ -107,9 +107,6 @@ class TermsAndConditionsScreen extends StatelessWidget {
               ],
               bulletPoints: [
                 'Google Play Services',
-                'AdMob',
-                'Google Analytics for Firebase',
-                'Firebase Crashlytics',
               ],
             ),
 

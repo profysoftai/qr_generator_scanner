@@ -3,8 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:qr_generator_scanner/core/services/ad_service.dart';
 import 'package:qr_generator_scanner/core/constants/app_colors.dart';
 import 'package:qr_generator_scanner/core/constants/app_strings.dart';
 import 'package:qr_generator_scanner/core/services/camera_permission_service.dart';
@@ -23,9 +21,6 @@ import 'package:qr_generator_scanner/features/splash/theme_prompt_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await MobileAds.instance.initialize();
-  AdService.configureTestDevice();
-  AdService.instance.loadInterstitial();
   final storage = StorageService();
   final repo = QrRepository(storage);
   final settingsProvider = SettingsProvider(storage);
